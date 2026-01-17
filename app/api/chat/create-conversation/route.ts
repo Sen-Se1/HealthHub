@@ -76,7 +76,7 @@ export async function POST(request: Request) {
 
     return Response.json({ conversation }, { status: 201 })
   } catch (error) {
-    console.error("[v0] Create conversation error:", error)
+    console.error("[API] Create conversation error:", error)
     return Response.json({ error: "Failed to create conversation" }, { status: 500 })
   }
 }

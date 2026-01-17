@@ -205,7 +205,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ user: updatedUser, success: true })
   } catch (error) {
-    console.error("[v0] Profile update error:", error)
+    console.error("[API] Profile update error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

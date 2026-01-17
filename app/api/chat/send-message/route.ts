@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       { status: 201 },
     )
   } catch (error) {
-    console.error("[v0] Send message error:", error)
+    console.error("[API] Send message error:", error)
     return Response.json({ error: "Failed to send message" }, { status: 500 })
   }
 }

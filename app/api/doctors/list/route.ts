@@ -1,9 +1,30 @@
 import { prisma } from "@/lib/db"
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const search = searchParams.get("search") || ""
+    const specialization = searchParams.get("specialization") || ""
+
+    const where: any = {
+      is_approved: true,
+    }
+
+    if (specialization && specialization !== "all") {
+      where.specialization = specialization
+    }
+
+    if (search) {
+      where.OR = [
+        { user: { first_name: { contains: search, mode: "insensitive" } } },
+        { user: { last_name: { contains: search, mode: "insensitive" } } },
+        { bio: { contains: search, mode: "insensitive" } },
+        { specialization: { contains: search, mode: "insensitive" } },
+      ]
+    }
+
     const rawDoctors = await prisma.doctor.findMany({
-      // where: { is_approved: true },
+      where,
       include: {
         user: true,
       },

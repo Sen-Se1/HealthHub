@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 
     return Response.json({ messages })
   } catch (error) {
-    console.error("[v0] Get messages error:", error)
+    console.error("[API] Messages error:", error)
     return Response.json({ error: "Failed to fetch messages" }, { status: 500 })
   }
 }

@@ -8,23 +8,23 @@ datasource db {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  password_hash String
-  first_name    String
-  last_name     String
-  phone         String?
+  id                  Int      @id @default(autoincrement())
+  email               String   @unique
+  password_hash       String
+  first_name          String
+  last_name           String
+  phone               String?
   profile_picture_url String?
-  role          String   @default("user")
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  role                String   @default("user")
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
 
-  sessions      Session[]
-  reset_tokens  PasswordResetToken[]
-  
-  patient       Patient?
-  doctor        Doctor?
-  
+  sessions     Session[]
+  reset_tokens PasswordResetToken[]
+
+  patient Patient?
+  doctor  Doctor?
+
   messages_sent ChatMessage[]
 
   @@map("users")
@@ -36,7 +36,7 @@ model Session {
   token      String   @unique
   expires_at DateTime
 
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -48,23 +48,23 @@ model PasswordResetToken {
   expires_at DateTime
   created_at DateTime @default(now())
 
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("password_reset_tokens")
 }
 
 model Patient {
-  id              Int      @id @default(autoincrement())
-  user_id         Int      @unique
+  id              Int     @id @default(autoincrement())
+  user_id         Int     @unique
   date_of_birth   String?
   gender          String?
   address         String?
   medical_history String?
 
-  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  
-  appointments    Appointment[]
-  conversations   ChatConversation[]
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  appointments  Appointment[]
+  conversations ChatConversation[]
 
   @@map("patients")
 }
@@ -73,7 +73,6 @@ model Doctor {
   id               Int      @id @default(autoincrement())
   user_id          Int      @unique
   specialization   String?
-  license_number   String?
   qualification    String?
   experience_years Int?
   bio              String?
@@ -81,44 +80,44 @@ model Doctor {
   is_approved      Boolean  @default(false)
   updated_at       DateTime @updatedAt
 
-  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  
-  appointments     Appointment[]
-  conversations    ChatConversation[]
-  availability     DoctorAvailability[]
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  appointments  Appointment[]
+  conversations ChatConversation[]
+  availability  DoctorAvailability[]
 
   @@map("doctors")
 }
 
 model Appointment {
-  id              Int      @id @default(autoincrement())
-  patient_id      Int
-  doctor_id       Int
+  id               Int      @id @default(autoincrement())
+  patient_id       Int
+  doctor_id        Int
   appointment_date DateTime
   reason_for_visit String?
-  status          String   @default("pending")
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
-  
-  patient         Patient  @relation(fields: [patient_id], references: [id])
-  doctor          Doctor   @relation(fields: [doctor_id], references: [id])
-  conversations   ChatConversation[]
-  
+  status           String   @default("pending")
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  patient       Patient            @relation(fields: [patient_id], references: [id])
+  doctor        Doctor             @relation(fields: [doctor_id], references: [id])
+  conversations ChatConversation[]
+
   @@map("appointments")
 }
 
 model ChatConversation {
-  id              Int      @id @default(autoincrement())
-  patient_id      Int
-  doctor_id       Int
-  appointment_id  Int?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
-  
-  patient         Patient  @relation(fields: [patient_id], references: [id])
-  doctor          Doctor   @relation(fields: [doctor_id], references: [id])
-  appointment     Appointment? @relation(fields: [appointment_id], references: [id])
-  messages        ChatMessage[]
+  id             Int      @id @default(autoincrement())
+  patient_id     Int
+  doctor_id      Int
+  appointment_id Int?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  patient     Patient       @relation(fields: [patient_id], references: [id])
+  doctor      Doctor        @relation(fields: [doctor_id], references: [id])
+  appointment Appointment?  @relation(fields: [appointment_id], references: [id])
+  messages    ChatMessage[]
 
   @@map("chat_conversations")
 }
@@ -129,23 +128,23 @@ model ChatMessage {
   sender_id       Int
   content         String
   created_at      DateTime @default(now())
-  
-  conversation    ChatConversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
-  sender          User    @relation(fields: [sender_id], references: [id], onDelete: Cascade)
+
+  conversation ChatConversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  sender       User             @relation(fields: [sender_id], references: [id], onDelete: Cascade)
 
   @@map("chat_messages")
 }
 
 model DoctorAvailability {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   doctor_id   Int
   day_of_week String
   start_time  String
   end_time    String
   break_start String?
   break_end   String?
-  
-  doctor      Doctor   @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
-  
+
+  doctor Doctor @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+
   @@map("doctor_availability")
 }

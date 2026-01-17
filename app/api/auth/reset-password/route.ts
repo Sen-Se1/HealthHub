@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     return Response.json({ message: "Password updated successfully" })
   } catch (error) {
-    console.error("[v0] Reset password error:", error)
+    console.error("[AUTH] Reset password error:", error)
     return Response.json({ error: "Internal server error" }, { status: 500 })
   }
 }

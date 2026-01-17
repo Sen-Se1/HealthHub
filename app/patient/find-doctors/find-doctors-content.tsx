@@ -1,13 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Search, Star, Briefcase, X, CalendarCheck } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Search, Star, Briefcase, X, CalendarCheck, Filter } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface Doctor {
@@ -20,45 +27,68 @@ interface Doctor {
   profile_picture_url?: string
 }
 
+const SPECIALIZATIONS = [
+  "General Practitioner",
+  "Cardiologist",
+  "Dermatologist",
+  "Neurologist",
+  "Pediatrician",
+  "Psychiatrist",
+  "Surgeon",
+  "Dentist",
+  "Orthopedist",
+]
+
 export default function FindDoctorsContent() {
   const router = useRouter()
   const [doctors, setDoctors] = useState<Doctor[]>([])
-  const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [specialization, setSpecialization] = useState("all")
   const [loading, setLoading] = useState(true)
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null)
   const [appointmentDate, setAppointmentDate] = useState("")
   const [reason, setReason] = useState("")
   const [bookingLoading, setBookingLoading] = useState(false)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const res = await fetch("/api/doctors/list")
-        const data = await res.json()
-        setDoctors(data.doctors || [])
-        setFilteredDoctors(data.doctors || [])
-      } catch (err) {
-        console.error("[v0] Error fetching doctors:", err)
-      } finally {
-        setLoading(false)
-      }
+  const fetchDoctors = useCallback(async () => {
+    setLoading(true)
+    
+    // Cancel previous request if exists
+    if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
     }
+    abortControllerRef.current = new AbortController()
 
-    fetchDoctors()
-  }, [])
+    try {
+      const params = new URLSearchParams()
+      if (searchTerm) params.append("search", searchTerm)
+      if (specialization && specialization !== "all") params.append("specialization", specialization)
+      
+      const res = await fetch(`/api/doctors/list?${params.toString()}`, {
+          signal: abortControllerRef.current.signal
+      })
+      if (!res.ok) throw new Error("Failed to fetch")
+      const data = await res.json()
+      setDoctors(data.doctors || [])
+    } catch (err: any) {
+      if (err.name !== 'AbortError') {
+          console.error("[API] Error fetching doctors:", err)
+      }
+    } finally {
+        if (!abortControllerRef.current?.signal.aborted) {
+            setLoading(false)
+        }
+    }
+  }, [searchTerm, specialization])
 
   useEffect(() => {
-    const filtered = doctors.filter((doctor) => {
-      const searchLower = searchTerm.toLowerCase()
-      return (
-        doctor.first_name.toLowerCase().includes(searchLower) ||
-        doctor.last_name.toLowerCase().includes(searchLower) ||
-        doctor.specialization.toLowerCase().includes(searchLower)
-      )
-    })
-    setFilteredDoctors(filtered)
-  }, [searchTerm, doctors])
+    const timer = setTimeout(() => {
+      fetchDoctors()
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [fetchDoctors])
 
   const handleBookAppointment = async () => {
     if (!selectedDoctor || !appointmentDate) {
@@ -97,7 +127,7 @@ export default function FindDoctorsContent() {
         alert("Failed to book appointment")
       }
     } catch (err) {
-      console.error("[v0] Error booking appointment:", err)
+      console.error("[API] Error booking appointment:", err)
       alert("Error booking appointment")
     } finally {
       setBookingLoading(false)
@@ -110,15 +140,16 @@ export default function FindDoctorsContent() {
     transition: { duration: 0.5 }
   }
 
-  if (loading) {
+  if (loading && doctors.length === 0) {
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="mb-8 space-y-2">
+            <div className="mb-8 space-y-4">
                 <Skeleton className="h-10 w-64" />
                 <Skeleton className="h-5 w-96" />
-            </div>
-            <div className="relative mb-8">
-               <Skeleton className="h-12 w-full rounded-lg" />
+                <div className="flex gap-4">
+                     <Skeleton className="h-12 w-full max-w-md rounded-lg" />
+                     <Skeleton className="h-12 w-48 rounded-lg" />
+                </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -140,26 +171,44 @@ export default function FindDoctorsContent() {
         <p className="text-muted-foreground">Search and book appointments with specialists</p>
       </motion.div>
 
-      {/* Search */}
+      {/* Search and Filter */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        className="relative mb-8"
+        className="flex flex-col md:flex-row gap-4 mb-8"
       >
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          placeholder="Search by name or specialization..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-12 h-12 bg-card/50 backdrop-blur-sm border-border text-foreground shadow-sm focus-visible:ring-primary"
-        />
+        <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+            placeholder="Search by name, bio, or specialization..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-12 h-12 bg-card/50 backdrop-blur-sm border-border text-foreground shadow-sm focus-visible:ring-primary"
+            />
+        </div>
+        <div className="w-full md:w-[250px]">
+            <Select value={specialization} onValueChange={setSpecialization}>
+                <SelectTrigger className="h-12 bg-card/50 backdrop-blur-sm border-border">
+                    <div className="flex items-center gap-2">
+                        <Filter className="h-4 w-4 text-muted-foreground" />
+                        <SelectValue placeholder="All Specializations" />
+                    </div>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Specializations</SelectItem>
+                    {SPECIALIZATIONS.map((spec) => (
+                        <SelectItem key={spec} value={spec}>{spec}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
       </motion.div>
 
       {/* Doctor Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <AnimatePresence>
-        {filteredDoctors.length === 0 ? (
+        {doctors.length === 0 ? (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -169,7 +218,7 @@ export default function FindDoctorsContent() {
             <p className="text-muted-foreground text-lg">No doctors found matching your search.</p>
           </motion.div>
         ) : (
-          filteredDoctors.map((doctor, idx) => (
+          doctors.map((doctor, idx) => (
             <motion.div
                 key={doctor.id}
                 variants={fadeIn}

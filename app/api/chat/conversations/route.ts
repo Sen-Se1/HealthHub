@@ -76,7 +76,7 @@ export async function GET(request: Request) {
 
     return Response.json({ conversations })
   } catch (error) {
-    console.error("[v0] Get conversations error:", error)
+    console.error("[API] Conversations error:", error)
     return Response.json({ error: "Failed to fetch conversations" }, { status: 500 })
   }
 }
