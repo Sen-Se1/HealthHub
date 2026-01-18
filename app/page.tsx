@@ -464,12 +464,12 @@ export default function Home() {
                 Are you a healthcare professional looking to reach more patients and digitize your workflow? Join our network today.
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Link href="/auth/register?role=doctor">
+                <Link href="/auth/register">
                   <Button size="lg" variant="secondary" className="h-18 px-12 text-xl font-black rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95 bg-white text-primary hover:bg-white/90">
                     Apply as Doctor
                   </Button>
                 </Link>
-                <Link href="/contact-us">
+                <Link href="/auth/register">
                   <Button size="lg" variant="outline" className="h-18 px-12 text-xl font-bold rounded-full border-white/50 text-white bg-white/10 backdrop-blur-md hover:bg-white/20 hover:border-white transition-all">
                     Partner with Us
                   </Button>
@@ -551,8 +551,8 @@ export default function Home() {
 
             {[
               { title: "Platform", links: [{n: "Find Doctors", h: "#doctors"}, {n: "Specialties", h: "#specialties"}, {n: "How it Works", h: "#how-it-works"}, {n: "Join as Doctor", h: "#join-as-doctor"}] },
-              { title: "Company", links: [{n: "About Us", h: "#"}, {n: "Contact", h: "/contact-us"}, {n: "Careers", h: "#"}] },
-              { title: "Legal", links: [{n: "Privacy Policy", h: "/privacy-policy"}, {n: "Terms of Service", h: "/terms-of-service"}, {n: "Cookie Policy", h: "#"}, {n: "Legal Notes", h: "#"}] }
+              { title: "Company", links: [{n: "About Us", h: "/about-us"}, {n: "Contact", h: "/contact-us"}, {n: "Careers", h: "/careers"}, {n: "FAQ", h: "/faq"}] },
+              { title: "Legal", links: [{n: "Privacy Policy", h: "/privacy-policy"}, {n: "Terms of Service", h: "/terms-of-service"}, {n: "Cookie Policy", h: "/cookies"}, {n: "Legal Notes", h: "/legal-notes"}] }
             ].map((col, idx) => (
               <div key={idx}>
                 <h5 className="font-black text-xl mb-8 tracking-tight">{col.title}</h5>

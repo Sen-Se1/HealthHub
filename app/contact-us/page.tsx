@@ -14,15 +14,17 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select"
-import { ModeToggle } from "@/components/ui/mode-toggle"
 import { toast } from "sonner"
+import { PublicNavbar } from "@/components/public-navbar"
+import { PublicFooter } from "@/components/public-footer"
+import { ModeToggle } from "@/components/ui/mode-toggle"
 
 export default function ContactUsPage() {
   const [loading, setLoading] = useState(false)
@@ -38,7 +40,7 @@ export default function ContactUsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -67,37 +69,14 @@ export default function ContactUsPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Sticky Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white h-5 w-5" />
-            </div>
-            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          
-          <div className="hidden md:block items-center gap-8">
-            <span className="text-sm font-bold text-foreground">Contact Us</span>
-            <div className="h-4 w-px bg-border" />
-            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Sign In</Link>
-            <Link href="/auth/register">
-              <Button size="sm" className="rounded-full font-bold">Get Started</Button>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <ModeToggle />
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar activePage="Contact" />
 
       <main className="flex-1 pt-32 pb-24">
         {/* Hero Section */}
         <section className="container mx-auto px-4 mb-20 text-center md:text-left">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 bg-primary/5 p-8 md:p-16 rounded-[3rem] border border-primary/10 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -mr-48 -mt-48" />
-            
+
             <div className="flex-1 z-10">
               <Link href="/" className="inline-flex items-center gap-2 text-primary font-bold text-sm mb-6 hover:gap-3 transition-all">
                 <ArrowLeft className="h-4 w-4" /> Back to Home

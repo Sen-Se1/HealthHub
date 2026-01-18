@@ -1,20 +1,19 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
-  Stethoscope, Search, ChevronDown, 
+  Search, ChevronDown, 
   User, UserPlus, Calendar, CreditCard, 
   ShieldCheck, HelpCircle, ArrowRight,
-  Plus, Minus,
   Mail
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ModeToggle } from "@/components/ui/mode-toggle"
+import { PublicNavbar } from "@/components/public-navbar"
+import { PublicFooter } from "@/components/public-footer"
 
 const FAQ_DATA = [
   {
@@ -87,34 +86,7 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Sticky Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white h-5 w-5" />
-            </div>
-            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          
-          <div className="hidden md:flex items-center gap-8">
-            <span className="text-sm font-bold text-foreground">FAQ</span>
-            <div className="h-4 w-px bg-border" />
-            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Sign In</Link>
-            <Link href="/auth/register">
-              <Button className="h-9 rounded-full px-5 font-bold shadow-lg shadow-primary/20">Get Started</Button>
-            </Link>
-            <ModeToggle />
-          </div>
-
-          <div className="md:hidden flex items-center gap-4">
-            <ModeToggle />
-            <Link href="/auth/login">
-              <Button variant="ghost" size="sm" className="font-bold">Sign In</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar activePage="FAQ" />
 
       {/* Hero Header */}
       <section className="pt-32 pb-20 relative overflow-hidden">
@@ -261,105 +233,19 @@ export default function FAQPage() {
                 Can't find the answer you're looking for? Please reach out to our friendly support team for personal assistance.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact-us">
-                  <Button size="lg" className="h-14 px-8 rounded-full font-black text-lg bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 w-full sm:w-auto">
+                <Button size="lg" className="h-14 px-8 rounded-full font-black text-lg bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 w-full sm:w-auto">
                     Contact Support <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/auth/login">
-                  <Button size="lg" variant="outline" className="h-14 px-8 rounded-full font-black text-lg border-2 border-primary/20 hover:bg-primary/5 w-full sm:w-auto">
+                </Button>
+                <Button size="lg" variant="outline" className="h-14 px-8 rounded-full font-black text-lg border-2 border-primary/20 hover:bg-primary/5 w-full sm:w-auto">
                     Sign In to Account
-                  </Button>
-                </Link>
+                </Button>
               </div>
             </div>
           </Card>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-muted/50 border-t border-border/40 py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 sm:gap-8">
-            <div className="col-span-1 md:col-span-1">
-              <Link href="/" className="flex items-center gap-2 mb-6">
-                <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-                  <Stethoscope className="text-white h-6 w-6" />
-                </div>
-                <span className="font-black text-2xl tracking-tighter">HealthHub</span>
-              </Link>
-              <p className="text-muted-foreground font-medium leading-relaxed">
-                Empowering patients and doctors with seamless digital healthcare experiences. 
-                Accessible, secure, and compassionate care for everyone.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-black text-lg mb-6">Patient Resources</h4>
-              <ul className="space-y-4 text-muted-foreground font-medium">
-                <li><Link href="/#doctors" className="hover:text-primary transition-colors">Find a Doctor</Link></li>
-                <li><Link href="/#specialties" className="hover:text-primary transition-colors">Specialties</Link></li>
-                <li><Link href="/auth/login" className="hover:text-primary transition-colors">Your Dashboard</Link></li>
-                <li><Link href="/faq" className="text-primary">FAQ Center</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-black text-lg mb-6">Company</h4>
-              <ul className="space-y-4 text-muted-foreground font-medium">
-                <li><Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-                <li><Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/contact-us" className="hover:text-primary transition-colors">Contact Support</Link></li>
-                <li><Link href="/auth/register" className="hover:text-primary transition-colors">Partner with Us</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-black text-lg mb-6">Legal & Security</h4>
-              <div className="space-y-6">
-                <p className="text-muted-foreground font-medium text-sm">
-                  HealthHub is a HIPAA compliant platform ensuring your data remains encrypted and private.
-                </p>
-                <div className="flex gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-background border border-border/50 flex items-center justify-center shadow-sm">
-                    <ShieldCheck className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="h-12 w-12 rounded-xl bg-background border border-border/50 flex items-center justify-center shadow-sm">
-                    <Globe className="h-6 w-6 text-primary" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="h-px bg-border/40 my-12" />
-          <div className="flex flex-col md:row items-center justify-between gap-6 text-muted-foreground font-medium text-sm">
-            <p>© 2026 HealthHub Digital Healthcare. All rights reserved.</p>
-            <div className="flex items-center gap-6">
-              <Link href="/privacy-policy" className="hover:text-primary">Privacy</Link>
-              <Link href="/terms-of-service" className="hover:text-primary">Terms</Link>
-              <Link href="/cookies" className="hover:text-primary">Cookies</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
-  )
-}
-
-function Globe(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 2a14.5 14.5 0 0 0 0 20" />
-      <path d="M2 12h20" />
-    </svg>
   )
 }

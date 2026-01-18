@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ModeToggle } from "@/components/ui/mode-toggle"
+import { PublicNavbar } from "@/components/public-navbar"
+import { PublicFooter } from "@/components/public-footer"
 
 const JOBS = [
   {
@@ -91,34 +93,7 @@ export default function CareersPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Sticky Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white h-5 w-5" />
-            </div>
-            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          
-          <div className="hidden md:flex items-center gap-8">
-            <span className="text-sm font-bold text-foreground">Careers</span>
-            <div className="h-4 w-px bg-border" />
-            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Sign In</Link>
-            <Link href="/auth/register">
-              <Button className="h-9 rounded-full px-5 font-bold shadow-lg shadow-primary/20">Get Started</Button>
-            </Link>
-            <ModeToggle />
-          </div>
-
-          <div className="md:hidden flex items-center gap-4">
-            <ModeToggle />
-            <Link href="/auth/login" className="text-muted-foreground">
-              <Button variant="ghost" size="sm" className="font-bold">Sign In</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar activePage="Careers" />
 
       {/* Hero Section */}
       <section className="pt-32 pb-24 relative overflow-hidden">
@@ -464,60 +439,7 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-muted/50 border-t border-border/40 py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 sm:gap-8">
-            <div className="col-span-1 md:col-span-1">
-              <Link href="/" className="flex items-center gap-2 mb-6">
-                <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-                  <Stethoscope className="text-white h-6 w-6" />
-                </div>
-                <span className="font-black text-2xl tracking-tighter text-foreground">HealthHub</span>
-              </Link>
-              <p className="text-muted-foreground font-medium leading-relaxed italic">
-                Empowering patients and doctors with seamless digital healthcare experiences. 
-                Accessible, secure, and compassionate care for everyone.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-black text-lg mb-6 tracking-tight uppercase tracking-widest text-[10px] text-muted-foreground">Resources</h4>
-              <ul className="space-y-4 text-muted-foreground font-medium italic text-sm">
-                <li><Link href="/about-us" className="hover:text-primary transition-colors">About Our Vision</Link></li>
-                <li><Link href="/careers" className="text-primary font-black">Careers at HealthHub</Link></li>
-                <li><Link href="/faq" className="hover:text-primary transition-colors">Help Center / FAQ</Link></li>
-                <li><Link href="/contact-us" className="hover:text-primary transition-colors">Contact Support</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-black text-lg mb-6 tracking-tight uppercase tracking-widest text-[10px] text-muted-foreground">Legal</h4>
-              <ul className="space-y-4 text-muted-foreground font-medium italic text-sm">
-                <li><Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-                <li><Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/cookies" className="hover:text-primary transition-colors">Cookie Policy</Link></li>
-                <li><Link href="/legal-notes" className="hover:text-primary transition-colors">Legal Disclosure</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-black text-lg mb-6 tracking-tight uppercase tracking-widest text-[10px] text-muted-foreground">Stay Connected</h4>
-              <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-background border border-border/50 flex items-center justify-center hover:border-primary transition-colors">
-                    <Globe className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="h-10 w-10 rounded-xl bg-background border border-border/50 flex items-center justify-center hover:border-primary transition-colors">
-                    <Laptop className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="h-10 w-10 rounded-xl bg-background border border-border/50 flex items-center justify-center hover:border-primary transition-colors">
-                    <Send className="h-5 w-5 text-primary" />
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground font-bold italic">© 2026 HealthHub Digital. <br />Making healthcare human again.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   )
 }

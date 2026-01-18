@@ -4,14 +4,14 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { 
-  Stethoscope, Shield, Lock, ChevronRight, ArrowLeft, 
-  Mail, Clock, CheckCircle2, ShieldCheck, Scale, FileText,
+  Shield, Lock, ChevronRight, ArrowLeft, 
+  Clock, CheckCircle2, Scale, FileText,
   AlertTriangle, CreditCard, Ban, Briefcase, UserCheck,
   MessageSquare, HelpCircle, Gavel, XCircle, RefreshCw,
   ArrowRight
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ModeToggle } from "@/components/ui/mode-toggle"
+import { PublicNavbar } from "@/components/public-navbar"
+import { PublicFooter } from "@/components/public-footer"
 
 const sections = [
   { id: "acceptance", title: "1. Acceptance of Terms", icon: Scale, content: "By accessing or using the HealthHub platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site." },
@@ -49,30 +49,7 @@ const sections = [
 export default function TermsOfServicePage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Sticky Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white h-5 w-5" />
-            </div>
-            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          
-          <div className="hidden md:flex items-center gap-8">
-            <span className="text-sm font-bold text-foreground">Terms of Service</span>
-            <div className="h-4 w-px bg-border" />
-            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Sign In</Link>
-            <Link href="/auth/register">
-              <Button size="sm" className="rounded-full font-bold">Get Started</Button>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <ModeToggle />
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar />
 
       <main className="pt-32 pb-24">
         {/* Hero Section */}
@@ -187,54 +164,7 @@ export default function TermsOfServicePage() {
         </div>
       </main>
 
-      {/* Simplified Footer */}
-      <footer className="bg-muted/30 border-t border-border/40 pt-20 pb-10">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-1 md:col-span-1">
-              <Link href="/" className="flex items-center gap-2 mb-6">
-                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Stethoscope className="text-white h-4 w-4" />
-                </div>
-                <span className="font-black text-xl tracking-tighter">HealthHub</span>
-              </Link>
-              <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                Establishing the digital foundation for modern, trustworthy healthcare connections.
-              </p>
-            </div>
-            <div>
-              <h5 className="font-black uppercase text-xs tracking-widest text-foreground mb-6">Platform</h5>
-              <div className="flex flex-col gap-4 text-sm font-bold text-muted-foreground">
-                <Link href="/#features" className="hover:text-primary">Features</Link>
-                <Link href="/#doctors" className="hover:text-primary">Find Doctors</Link>
-                <Link href="/auth/register" className="hover:text-primary">Partner with Us</Link>
-              </div>
-            </div>
-            <div>
-              <h5 className="font-black uppercase text-xs tracking-widest text-foreground mb-6">Legal</h5>
-              <div className="flex flex-col gap-4 text-sm font-bold text-muted-foreground">
-                <Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link>
-                <Link href="/terms-of-service" className="flex items-center gap-2 text-primary">Terms of Service <ChevronRight className="h-3 w-3" /></Link>
-              </div>
-            </div>
-            <div>
-              <h5 className="font-black uppercase text-xs tracking-widest text-foreground mb-6">Connect</h5>
-              <div className="flex flex-col gap-4 text-sm font-bold text-muted-foreground">
-                <Link href="/contact-us" className="hover:text-primary">Contact Us</Link>
-                <div className="flex gap-4 mt-2">
-                  <a href="#" className="h-8 w-8 rounded-full bg-background border flex items-center justify-center hover:bg-primary hover:text-white transition-all"><ArrowRight className="h-4 w-4" /></a>
-                  <a href="#" className="h-8 w-8 rounded-full bg-background border flex items-center justify-center hover:bg-primary hover:text-white transition-all"><ArrowRight className="h-4 w-4" /></a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-border/40 pt-8 text-center sm:text-left flex flex-col sm:row items-center justify-between gap-4">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-              &copy; {new Date().getFullYear()} HealthHub Inc. All rights reserved. Professionalism in every byte.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   )
 }
