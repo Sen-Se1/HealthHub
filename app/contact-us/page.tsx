@@ -1,260 +1,382 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
+import { 
+  Stethoscope, Mail, Phone, MapPin, Clock, 
+  Send, CheckCircle2, ArrowLeft, MessageSquare, 
+  User, ChevronRight, HelpCircle, PhoneCall, Globe
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { ModeToggle } from "@/components/ui/mode-toggle"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Mail, MapPin, Phone, Send, ArrowLeft } from "lucide-react"
-import { motion } from "framer-motion"
-
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { contactSchema } from "@/lib/validations"
+import { Card, CardContent } from "@/components/ui/card"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select"
+import { ModeToggle } from "@/components/ui/mode-toggle"
 import { toast } from "sonner"
-import { useState } from "react"
 
 export default function ContactUsPage() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { 
-    register, 
-    handleSubmit, 
-    reset,
-    formState: { errors } 
-  } = useForm({
-    resolver: zodResolver(contactSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      subject: "",
-      message: "",
-    }
+  const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    role: "patient",
+    subject: "",
+    message: ""
   })
 
-  const onSubmit = async (data: any) => {
-    setIsSubmitting(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    
     try {
-      const res = await fetch("/api/contact", {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formData),
       })
 
-      if (res.ok) {
-        toast.success("Message sent successfully!", {
-          description: "We'll get back to you as soon as possible.",
-        })
-        reset()
-      } else {
-        const result = await res.json()
-        toast.error(result.error || "Failed to send message")
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send message")
       }
-    } catch (err) {
-      toast.error("An unexpected error occurred. Please try again later.")
+
+      setSubmitted(true)
+      toast.success("Message sent successfully!", {
+        description: "We'll get back to you within 24 hours.",
+      })
+    } catch (error: any) {
+      toast.error("Error", {
+        description: error.message || "An unexpected error occurred.",
+      })
     } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
-  }
-
-  const stagger = {
-    animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
+      setLoading(false)
     }
   }
 
   return (
-    <main className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-full bg-grid-white -z-10" />
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-chart-2/10 rounded-full blur-[120px] -z-10" />
-
-      {/* Header */}
-      <motion.header 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-50 glass border-b border-border/50"
-      >
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="text-primary-foreground font-bold text-lg">H</span>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Sticky Navbar */}
+      <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+              <Stethoscope className="text-white h-5 w-5" />
             </div>
-            <span className="font-bold text-foreground text-xl tracking-tight">HealthHub</span>
+            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
           </Link>
+          
+          <div className="hidden md:block items-center gap-8">
+            <span className="text-sm font-bold text-foreground">Contact Us</span>
+            <div className="h-4 w-px bg-border" />
+            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Sign In</Link>
+            <Link href="/auth/register">
+              <Button size="sm" className="rounded-full font-bold">Get Started</Button>
+            </Link>
+          </div>
+
           <div className="flex items-center gap-4">
             <ModeToggle />
-            <Link href="/auth/login">
-              <Button variant="ghost" className="font-medium">Sign In</Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button className="font-medium shadow-lg shadow-primary/20">Get Started</Button>
-            </Link>
           </div>
         </div>
-      </motion.header>
+      </nav>
 
-      {/* Content */}
-      <section className="container mx-auto px-4 py-20">
-        <motion.div 
-          initial="initial"
-          animate="animate"
-          variants={stagger}
-          className="max-w-5xl mx-auto"
-        >
-          <motion.div variants={fadeIn} className="mb-12 text-center">
-            <Link href="/">
-              <Button variant="secondary" className="mb-8 group">
-                <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Home
-              </Button>
-            </Link>
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-6">Contact Us</h1>
-            <p className="text-xl text-muted-foreground w-full max-w-2xl mx-auto">
-              We're here to help. Reach out to us for any questions or support.
-            </p>
-          </motion.div>
+      <main className="flex-1 pt-32 pb-24">
+        {/* Hero Section */}
+        <section className="container mx-auto px-4 mb-20 text-center md:text-left">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 bg-primary/5 p-8 md:p-16 rounded-[3rem] border border-primary/10 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -mr-48 -mt-48" />
+            
+            <div className="flex-1 z-10">
+              <Link href="/" className="inline-flex items-center gap-2 text-primary font-bold text-sm mb-6 hover:gap-3 transition-all">
+                <ArrowLeft className="h-4 w-4" /> Back to Home
+              </Link>
+              <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter">Contact Us</h1>
+              <p className="text-xl text-muted-foreground font-medium mb-8 leading-relaxed max-w-xl">
+                We&apos;re here to help. Whether you&apos;re a patient looking for care or a doctor wanting to join our network, reach out and we&apos;ll get back to you.
+              </p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-sm font-black text-primary">
+                <span className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5" /> 24/7 Support Response</span>
+                <span className="flex items-center gap-2"><Globe className="h-5 w-5" /> Multi-language Support</span>
+              </div>
+            </div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            <motion.div variants={fadeIn} className="space-y-8">
-              <div className="glass-card p-8 rounded-3xl">
-                <h3 className="text-2xl font-bold mb-6">Get in Touch</h3>
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Mail className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">Email</h4>
-                      <p className="text-muted-foreground">support@healthhub.com</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Phone className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">Phone</h4>
-                      <p className="text-muted-foreground">+1 (555) 123-4567</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <MapPin className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">Office</h4>
-                      <p className="text-muted-foreground">
-                        123 Health Street<br />
-                        Medical District<br />
-                        San Francisco, CA 94105
-                      </p>
-                    </div>
-                  </div>
+            <div className="w-full md:w-[450px] aspect-square relative z-10 shrink-0">
+              <div className="absolute inset-0 bg-linear-to-tr from-primary/20 to-transparent rounded-4xl" />
+              <Image 
+                src="https://images.unsplash.com/photo-1559839734-2b71f1536783?q=80&w=1200&auto=format&fit=crop" 
+                alt="Healthcare Support Specialist" 
+                fill
+                className="object-cover rounded-4xl border border-white/10 shadow-3xl"
+              />
+              <div className="absolute -bottom-6 -left-6 glass p-6 rounded-2xl border border-white/20 shadow-2xl flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center">
+                  <PhoneCall className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">Direct Line</p>
+                  <p className="text-lg font-black">+1 (800) HELP-DOC</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
 
-              <div className="glass-card p-8 rounded-3xl bg-primary/5 border-primary/20">
-                <h3 className="text-xl font-bold mb-2">Office Hours</h3>
-                <p className="text-muted-foreground mb-4">
-                  Our support team is available during the following hours:
-                </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between border-b border-border/50 pb-2">
-                    <span>Monday - Friday</span>
-                    <span className="font-medium">9:00 AM - 6:00 PM PST</span>
-                  </div>
-                  <div className="flex justify-between border-b border-border/50 pb-2">
-                    <span>Saturday</span>
-                    <span className="font-medium">10:00 AM - 4:00 PM PST</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Sunday</span>
-                    <span className="font-medium">Closed</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+        <section className="container mx-auto px-4 max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            {/* Contact Form */}
+            <div className="lg:col-span-2">
+              <AnimatePresence mode="wait">
+                {!submitted ? (
+                  <motion.div
+                    key="form"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                  >
+                    <div className="mb-8">
+                      <h2 className="text-3xl font-black tracking-tighter mb-2">Send Us a Message</h2>
+                      <p className="text-muted-foreground font-medium">Fill out the form below and our team will contact you shortly.</p>
+                    </div>
 
-            <motion.div variants={fadeIn}>
-              <Card className="glass-card border-none h-full">
-                <CardContent className="p-8">
-                  <h3 className="text-2xl font-bold mb-6">Send us a Message</h3>
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" {...register("firstName")} placeholder="John" />
-                        {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-sm font-bold">Full Name</Label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                            <Input 
+                              id="name" 
+                              value={formData.name}
+                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                              placeholder="John Doe" 
+                              required 
+                              className="pl-11 h-12 bg-muted/30 border-border/50 focus-visible:ring-primary/20" 
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="text-sm font-bold">Email Address</Label>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                            <Input 
+                              id="email" 
+                              type="email" 
+                              value={formData.email}
+                              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                              placeholder="john@example.com" 
+                              required 
+                              className="pl-11 h-12 bg-muted/30 border-border/50 focus-visible:ring-primary/20" 
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" {...register("lastName")} placeholder="Doe" />
-                        {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="role" className="text-sm font-bold">Your Role</Label>
+                          <Select 
+                            value={formData.role} 
+                            onValueChange={(value) => setFormData({ ...formData, role: value })} 
+                            required
+                          >
+                            <SelectTrigger className="h-12 bg-muted/30 border-border/50 focus-visible:ring-primary/20">
+                              <SelectValue placeholder="Select your role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="patient">Patient</SelectItem>
+                              <SelectItem value="doctor">Doctor</SelectItem>
+                              <SelectItem value="visitor">Visitor / Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="subject" className="text-sm font-bold">Subject</Label>
+                          <Input 
+                            id="subject" 
+                            value={formData.subject}
+                            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                            placeholder="What is this about?" 
+                            required 
+                            className="h-12 bg-muted/30 border-border/50 focus-visible:ring-primary/20" 
+                          />
+                        </div>
                       </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="message" className="text-sm font-bold">Message</Label>
+                        <Textarea 
+                          id="message" 
+                          value={formData.message}
+                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                          placeholder="Tell us how we can help..." 
+                          required 
+                          className="min-h-[160px] bg-muted/30 border-border/50 focus-visible:ring-primary/20 resize-none px-4 py-3"
+                        />
+                      </div>
+
+                      <Button type="submit" disabled={loading} className="w-full h-14 text-lg font-black bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 group">
+                        {loading ? (
+                          "Sending Message..."
+                        ) : (
+                          <>
+                            Send Message <Send className="ml-2 h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="h-full flex flex-col items-center justify-center text-center p-12 bg-primary/5 rounded-[2.5rem] border border-primary/20 border-dashed"
+                  >
+                    <div className="h-24 w-24 rounded-full bg-primary flex items-center justify-center mb-8 shadow-2xl shadow-primary/40">
+                      <CheckCircle2 className="h-12 w-12 text-white" />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" {...register("email")} placeholder="john@example.com" />
-                      {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="subject">Subject</Label>
-                      <Input id="subject" {...register("subject")} placeholder="How can we help?" />
-                      {errors.subject && <p className="text-xs text-destructive">{errors.subject.message}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea 
-                        id="message" 
-                        {...register("message")}
-                        placeholder="Tell us more about your inquiry..." 
-                        className="min-h-[150px]"
-                      />
-                      {errors.message && <p className="text-xs text-destructive">{errors.message.message}</p>}
-                    </div>
-                    <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg shadow-lg shadow-primary/20">
-                      {isSubmitting ? "Sending..." : "Send Message"} <Send className="h-4 w-4 ml-2" />
+                    <h2 className="text-4xl font-black tracking-tighter mb-4">Email Sent!</h2>
+                    <p className="text-xl text-muted-foreground font-medium mb-10 max-w-sm">
+                      Thank you for reaching out. A HealthHub representative will contact you shortly.
+                    </p>
+                    <Button onClick={() => setSubmitted(false)} variant="outline" className="rounded-full font-bold px-8">
+                      Send another message
                     </Button>
-                  </form>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Quick Links */}
+              <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {[
+                  { title: "Booking Help", text: "How to book?", link: "/#how-it-works" },
+                  { title: "Doctor Join", text: "Join as Doctor", link: "/auth/register" },
+                  { title: "General FAQ", text: "Visit FAQ Page", link: "/faq" }
+                ].map((item, i) => (
+                  <Link key={i} href={item.link} className="p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                    <HelpCircle className="h-6 w-6 text-primary mb-4" />
+                    <h4 className="font-bold mb-1">{item.title}</h4>
+                    <span className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1 group-hover:text-primary transition-colors">
+                      {item.text} <ChevronRight className="h-3 w-3" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Sidebar Information */}
+            <div className="space-y-8">
+              <Card className="border-border/50 shadow-xl shadow-primary/5 bg-card/50 backdrop-blur-sm overflow-hidden">
+                <CardContent className="p-8 space-y-8">
+                  <h3 className="text-xl font-black tracking-tight border-b border-border/50 pb-4">Contact Information</h3>
+                  
+                  <div className="space-y-6">
+                    <div className="flex gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <MapPin className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-1">Office Address</p>
+                        <p className="text-base font-bold leading-relaxed">
+                          123 Medical Center Way<br />
+                          Suite 400, Innovation District<br />
+                          San Francisco, CA 94103
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <Mail className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-1">Email Us</p>
+                        <a href="mailto:support@healthhub.com" className="text-base font-bold hover:text-primary transition-colors">support@healthhub.com</a>
+                        <p className="text-xs text-muted-foreground font-medium mt-1">Expected reply: ~2-4 hours</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <Phone className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-1">Call Support</p>
+                        <p className="text-base font-bold">+1 (555) HEALTH-HUB</p>
+                        <p className="text-xs text-muted-foreground font-medium mt-1">Available 24/7 for urgent care</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-1">Business Hours</p>
+                        <div className="space-y-1 mt-1">
+                          <p className="text-sm font-bold flex justify-between gap-4"><span>Mon - Fri</span> <span className="text-primary">9AM - 6PM</span></p>
+                          <p className="text-sm font-bold flex justify-between gap-4"><span>Sat - Sun</span> <span className="text-primary">Closed</span></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
-            </motion.div>
-          </div>
-        </motion.div>
-      </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 py-12 glass">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">H</span>
+              {/* Social Connect */}
+              <div className="p-8 bg-muted/30 rounded-4xl border border-border/50 text-center">
+                <h4 className="font-black text-sm uppercase tracking-widest mb-6">Follow Our Updates</h4>
+                <div className="flex justify-center gap-4">
+                  {['Twitter', 'LinkedIn', 'Facebook'].map((social) => (
+                    <a key={social} href="#" className="h-12 w-12 rounded-full bg-background border border-border/50 flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm">
+                      <span className="sr-only">{social}</span>
+                      <MessageSquare className="h-5 w-5" />
+                    </a>
+                  ))}
+                </div>
               </div>
-              <span className="font-bold text-xl">HealthHub</span>
             </div>
-            <div className="flex gap-8 text-sm text-muted-foreground">
+
+          </div>
+        </section>
+      </main>
+
+      {/* Simplified Footer */}
+      <footer className="bg-muted/30 border-t border-border/40 py-12">
+        <div className="container mx-auto px-4 text-center">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 max-w-6xl mx-auto">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <Stethoscope className="text-white h-4 w-4" />
+              </div>
+              <span className="font-black text-xl tracking-tighter">HealthHub</span>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-8 text-sm font-bold text-muted-foreground uppercase tracking-wider">
               <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
               <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
-              <Link href="/contact-us" className="text-primary font-medium">Contact Us</Link>
+              <Link href="/" className="hover:text-primary transition-colors">Back to Home</Link>
             </div>
-            <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} HealthHub. All rights reserved.
+
+            <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+              &copy; {new Date().getFullYear()} HealthHub Inc. All rights reserved.
             </p>
           </div>
         </div>
       </footer>
-    </main>
+    </div>
   )
 }

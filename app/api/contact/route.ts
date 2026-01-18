@@ -11,19 +11,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 })
     }
 
-    const { firstName, lastName, email, subject, message } = result.data
+    const { name, email, role, subject, message } = result.data
 
     // Email to Support
     await sendEmail(
       process.env.SMTP_SUPPORT_MAIL!,
-      `Support Inquiry: ${subject}`,
+      `New Support Inquiry: ${subject}`,
       `
-      <h1>New Support Inquiry</h1>
-      <p><strong>Name:</strong> ${firstName} ${lastName}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Subject:</strong> ${subject}</p>
-      <p><strong>Message:</strong></p>
-      <p>${message}</p>
+      <div style="font-family: sans-serif; padding: 20px; color: #333;">
+        <h2 style="color: #1E88E5;">HealthHub Support Inquiry</h2>
+        <p><strong>From:</strong> ${name} (${role})</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+        <p><strong>Message:</strong></p>
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">
+          ${message.replace(/\n/g, '<br/>')}
+        </div>
+      </div>
       `
     )
 

@@ -1,154 +1,240 @@
 "use client"
 
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { FileCheck, AlertCircle, Scale, ArrowLeft } from "lucide-react"
+import Image from "next/image"
 import { motion } from "framer-motion"
+import { 
+  Stethoscope, Shield, Lock, ChevronRight, ArrowLeft, 
+  Mail, Clock, CheckCircle2, ShieldCheck, Scale, FileText,
+  AlertTriangle, CreditCard, Ban, Briefcase, UserCheck,
+  MessageSquare, HelpCircle, Gavel, XCircle, RefreshCw,
+  ArrowRight
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 
-export default function TermsOfService() {
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
-  }
+const sections = [
+  { id: "acceptance", title: "1. Acceptance of Terms", icon: Scale, content: "By accessing or using the HealthHub platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site." },
+  { id: "eligibility", title: "2. Eligibility", icon: UserCheck, content: "You must be at least 18 years of age to create an account on HealthHub. By using the platform, you represent and warrant that you have the right, authority, and capacity to enter into this agreement." },
+  { id: "accounts", title: "3. User Accounts", icon: Lock, items: [
+    "Users are responsible for maintaining account confidentiality.",
+    "All information provided must be accurate and updated regularly.",
+    "HealthHub reserves the right to suspend accounts for security violations.",
+    "One person may not maintain more than one active account."
+  ]},
+  { id: "doctor-resp", title: "4. Doctor Responsibilities", icon: Briefcase, content: "Healthcare providers joining the platform must provide valid credentials, maintain professional standards, and comply with all healthcare regulations and patient confidentiality laws." },
+  { id: "patient-resp", title: "5. Patient Responsibilities", icon: CheckCircle2, content: "Patients must provide accurate medical information, show up for scheduled appointments on time, and interact with healthcare providers in a respectful and professional manner." },
+  { id: "appointments", title: "6. Appointments & Cancellations", icon: Clock, items: [
+    "Appointments are subject to doctor availability and confirmation.",
+    "Cancellations must be made at least 24 hours in advance.",
+    "Repeated no-shows may lead to platform restrictions or fees.",
+    "Doctors may reschedule in case of medical emergencies."
+  ]},
+  { id: "payments", title: "7. Payments & Fees", icon: CreditCard, content: "While HealthHub platform usage is currently free for basic booking, specific consultation fees are set by individual doctors. Any payment processing through the platform is handled via secure third-party providers." },
+  { id: "communications", title: "8. Communications", icon: MessageSquare, content: "By using HealthHub, you consent to receive platform notifications, appointment reminders, and secure messages from healthcare providers. You may opt out of marketing communications at any time." },
+  { id: "prohibited", title: "9. Prohibited Use", icon: Ban, items: [
+    "Using the platform for fraudulent or illegal activities.",
+    "Attempting to bypass security or scrape platform data.",
+    "Harassing or abusing healthcare providers or other users.",
+    "Posting false or misleading medical information."
+  ]},
+  { id: "ip", title: "10. Intellectual Property", icon: Shield, content: "The HealthHub name, logo, and all original platform content are the exclusive property of HealthHub Inc. and are protected by international copyright and trademark laws." },
+  { id: "liability", title: "11. Limitation of Liability", icon: AlertTriangle, content: "HealthHub is a facilitator and does not provide direct medical advice. We are not liable for any outcomes of medical consultations or interactions occurring through the platform. Always seek professional medical care for emergencies." },
+  { id: "termination", title: "12. Termination", icon: XCircle, content: "HealthHub reserves the right to terminate or suspend your account at any time, without prior notice, for conduct that we believe violates these Terms or is harmful to other users or the platform." },
+  { id: "changes", title: "13. Changes to Terms", icon: RefreshCw, content: "We may revise these Terms of Service at any time. By continuing to use the platform after changes are posted, you agree to be bound by the updated version of the terms." },
+  { id: "law", title: "14. Governing Law", icon: Gavel, content: "These terms and conditions are governed by and construed in accordance with the laws of the jurisdiction in which HealthHub Inc. operates, without regard to its conflict of law provisions." },
+  { id: "contact", title: "15. Contact Information", icon: HelpCircle, content: "If you have any questions about these Terms, please contact our legal team at legal@healthhub.com or through our official support channels." }
+]
 
-  const stagger = {
-    animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
-
+export default function TermsOfServicePage() {
   return (
-    <main className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-full bg-grid-white -z-10" />
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-chart-2/10 rounded-full blur-[120px] -z-10" />
-
-      {/* Header */}
-      <motion.header 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-50 glass border-b border-border/50"
-      >
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="text-primary-foreground font-bold text-lg">H</span>
+    <div className="min-h-screen bg-background">
+      {/* Sticky Navbar */}
+      <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+              <Stethoscope className="text-white h-5 w-5" />
             </div>
-            <span className="font-bold text-foreground text-xl tracking-tight">HealthHub</span>
+            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
           </Link>
-          <div className="flex items-center gap-4">
-             <ModeToggle />
-            <Link href="/auth/login">
-              <Button variant="ghost" className="font-medium">Sign In</Button>
-            </Link>
+          
+          <div className="hidden md:flex items-center gap-8">
+            <span className="text-sm font-bold text-foreground">Terms of Service</span>
+            <div className="h-4 w-px bg-border" />
+            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Sign In</Link>
             <Link href="/auth/register">
-              <Button className="font-medium shadow-lg shadow-primary/20">Get Started</Button>
+              <Button size="sm" className="rounded-full font-bold">Get Started</Button>
             </Link>
           </div>
+
+          <div className="flex items-center gap-4">
+            <ModeToggle />
+          </div>
         </div>
-      </motion.header>
+      </nav>
 
-      {/* Content */}
-      <section className="container mx-auto px-4 py-20">
-        <motion.div 
-          initial="initial"
-          animate="animate"
-          variants={stagger}
-          className="max-w-4xl mx-auto"
-        >
-          <motion.div variants={fadeIn} className="mb-12 text-center">
-            <Link href="/">
-              <Button variant="secondary" className="mb-8 group">
-                <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Home
-              </Button>
-            </Link>
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-6">Terms of Service</h1>
-            <p className="text-xl text-muted-foreground">
-              Understanding your rights and responsibilities as a user.
-            </p>
-          </motion.div>
-
-          <motion.div variants={fadeIn} className="grid md:grid-cols-3 gap-6 mb-16">
-            <Card className="glass-card border-none">
-              <CardContent className="p-6 text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <FileCheck className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Agreement</h3>
-                <p className="text-sm text-muted-foreground">Using our service constitutes acceptance of these terms.</p>
-              </CardContent>
-            </Card>
-            <Card className="glass-card border-none">
-              <CardContent className="p-6 text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <AlertCircle className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Disclaimers</h3>
-                <p className="text-sm text-muted-foreground">Important limitations on our liability and warranties.</p>
-              </CardContent>
-            </Card>
-            <Card className="glass-card border-none">
-              <CardContent className="p-6 text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                   <Scale className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Governing Law</h3>
-                <p className="text-sm text-muted-foreground">These terms are governed by the laws of your jurisdiction.</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div variants={fadeIn} className="prose prose-invert max-w-none glass-card p-8 md:p-12 rounded-3xl">
-            <h3>1. Agreement to Terms</h3>
-            <p className="text-muted-foreground mb-6">
-              These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity, and HealthHub, concerning your access to and use of the HealthHub website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.
-            </p>
-
-            <h3>2. Intellectual Property Rights</h3>
-            <p className="text-muted-foreground mb-6">
-              Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the "Content") and the trademarks, service marks, and logos contained therein (the "Marks") are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws.
-            </p>
-
-            <h3>3. User Representations</h3>
-            <p className="text-muted-foreground mb-6">
-              By using the Site, you represent and warrant that: (1) all registration information you submit will be true, accurate, current, and complete; (2) you will maintain the accuracy of such information and promptly update such registration information as necessary.
-            </p>
-
-            <h3>4. Prohibited Activities</h3>
-            <p className="text-muted-foreground mb-6">
-              You may not access or use the Site for any purpose other than that for which we make the Site available. The Site may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us.
-            </p>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border/50 py-12 glass">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">H</span>
+      <main className="pt-32 pb-24">
+        {/* Hero Section */}
+        <section className="container mx-auto px-4 mb-20">
+          <div className="max-w-4xl mx-auto text-center md:text-left flex flex-col md:row items-center gap-12 bg-secondary/5 p-12 rounded-[2.5rem] border border-secondary/10 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl -mr-32 -mt-32" />
+            
+            <div className="flex-1 z-10">
+              <Link href="/" className="inline-flex items-center gap-2 text-primary font-bold text-sm mb-6 hover:gap-3 transition-all">
+                <ArrowLeft className="h-4 w-4" /> Back to Home
+              </Link>
+              <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter">Terms of Service</h1>
+              <p className="text-xl text-muted-foreground font-medium mb-8 leading-relaxed">
+                Please read these terms carefully before using our platform. By using HealthHub, youAgree to these terms.
+              </p>
+              <div className="flex items-center gap-4 text-sm font-bold text-secondary">
+                <span className="flex items-center gap-2"><Clock className="h-4 w-4" /> Last Updated: Oct 2023</span>
+                <span className="px-3 py-1 bg-secondary/10 rounded-full text-secondary-foreground text-xs">v1.4</span>
               </div>
-              <span className="font-bold text-xl">HealthHub</span>
             </div>
-            <div className="flex gap-8 text-sm text-muted-foreground">
-              <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link href="/terms-of-service" className="text-primary font-medium">Terms of Service</Link>
-              <Link href="/contact-us" className="hover:text-primary transition-colors">Contact Us</Link>
+
+            <div className="w-full md:w-72 h-72 relative z-10 shrink-0">
+              <div className="absolute inset-0 bg-linear-to-tr from-secondary/20 to-transparent rounded-3xl" />
+              <Image 
+                src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1470&auto=format&fit=crop" 
+                alt="Terms and Legal Illustration" 
+                fill
+                className="object-cover rounded-3xl border border-white/10 shadow-2xl"
+              />
+              <div className="absolute -bottom-4 -left-4 glass p-4 rounded-xl border border-white/20 shadow-xl">
+                <FileText className="h-8 w-8 text-secondary" />
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} HealthHub. All rights reserved.
+          </div>
+        </section>
+
+        {/* Content Section */}
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="flex flex-col lg:flex-row gap-16">
+            
+            {/* Table of Contents - Desktop Only */}
+            <aside className="hidden lg:block w-64 shrink-0 sticky top-24 h-fit">
+              <h4 className="font-black uppercase tracking-widest text-xs text-muted-foreground mb-6">In these terms</h4>
+              <nav className="space-y-4">
+                {sections.map((section) => (
+                  <a 
+                    key={section.id} 
+                    href={`#${section.id}`}
+                    className="block text-sm font-bold text-muted-foreground hover:text-primary transition-all flex items-center gap-2 group"
+                  >
+                    <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-all" />
+                    {section.title.split('. ')[1]}
+                  </a>
+                ))}
+              </nav>
+            </aside>
+
+            {/* Main Policy Content */}
+            <div className="flex-1 space-y-16 font-sans">
+              {sections.map((section) => (
+                <motion.section 
+                  key={section.id} 
+                  id={section.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="scroll-mt-24 group"
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="h-10 w-10 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                      <section.icon className="h-5 w-5" />
+                    </div>
+                    <h2 className="text-2xl font-black tracking-tight">{section.title}</h2>
+                  </div>
+                  
+                  {section.content && (
+                    <p className="text-lg text-muted-foreground font-medium leading-relaxed">
+                      {section.content}
+                    </p>
+                  )}
+
+                  {section.items && (
+                    <ul className="space-y-4 mt-6">
+                      {section.items.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-3 bg-muted/30 p-4 rounded-2xl border border-border/50">
+                          <CheckCircle2 className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
+                          <span className="text-foreground/90 font-bold text-base leading-snug">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  
+                  {(section.id === "liability" || section.id === "termination") && (
+                    <div className="mt-8 p-6 bg-red-500/5 border border-red-500/10 rounded-3xl flex items-center gap-6">
+                      <div className="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+                        <AlertTriangle className="h-6 w-6 text-red-500" />
+                      </div>
+                      <p className="text-sm font-bold text-destructive italic leading-relaxed">
+                        {section.id === "liability" 
+                          ? "IMPORTANT: HealthHub is not responsible for medical outcomes. Consult a doctor for professional advice."
+                          : "HealthHub reserves the right to terminate accounts that compromise platform safety."}
+                      </p>
+                    </div>
+                  )}
+
+                  <hr className="mt-16 border-border/40" />
+                </motion.section>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      {/* Simplified Footer */}
+      <footer className="bg-muted/30 border-t border-border/40 pt-20 pb-10">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div className="col-span-1 md:col-span-1">
+              <Link href="/" className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                  <Stethoscope className="text-white h-4 w-4" />
+                </div>
+                <span className="font-black text-xl tracking-tighter">HealthHub</span>
+              </Link>
+              <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+                Establishing the digital foundation for modern, trustworthy healthcare connections.
+              </p>
+            </div>
+            <div>
+              <h5 className="font-black uppercase text-xs tracking-widest text-foreground mb-6">Platform</h5>
+              <div className="flex flex-col gap-4 text-sm font-bold text-muted-foreground">
+                <Link href="/#features" className="hover:text-primary">Features</Link>
+                <Link href="/#doctors" className="hover:text-primary">Find Doctors</Link>
+                <Link href="/auth/register" className="hover:text-primary">Partner with Us</Link>
+              </div>
+            </div>
+            <div>
+              <h5 className="font-black uppercase text-xs tracking-widest text-foreground mb-6">Legal</h5>
+              <div className="flex flex-col gap-4 text-sm font-bold text-muted-foreground">
+                <Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link>
+                <Link href="/terms-of-service" className="flex items-center gap-2 text-primary">Terms of Service <ChevronRight className="h-3 w-3" /></Link>
+              </div>
+            </div>
+            <div>
+              <h5 className="font-black uppercase text-xs tracking-widest text-foreground mb-6">Connect</h5>
+              <div className="flex flex-col gap-4 text-sm font-bold text-muted-foreground">
+                <Link href="/contact-us" className="hover:text-primary">Contact Us</Link>
+                <div className="flex gap-4 mt-2">
+                  <a href="#" className="h-8 w-8 rounded-full bg-background border flex items-center justify-center hover:bg-primary hover:text-white transition-all"><ArrowRight className="h-4 w-4" /></a>
+                  <a href="#" className="h-8 w-8 rounded-full bg-background border flex items-center justify-center hover:bg-primary hover:text-white transition-all"><ArrowRight className="h-4 w-4" /></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-border/40 pt-8 text-center sm:text-left flex flex-col sm:row items-center justify-between gap-4">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+              &copy; {new Date().getFullYear()} HealthHub Inc. All rights reserved. Professionalism in every byte.
             </p>
           </div>
         </div>
       </footer>
-    </main>
+    </div>
   )
 }

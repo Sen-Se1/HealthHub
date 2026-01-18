@@ -332,7 +332,7 @@ export default function Home() {
                 transition={{ delay: idx * 0.1 }}
               >
                 <Card className="rounded-3xl overflow-hidden border border-border/50 hover:shadow-medical-hover transition-all duration-500 group">
-                  <div className="relative h-72 overflow-hidden">
+                  <div className="relative aspect-square rounded-4xl overflow-hidden shadow-medical">
                     <Image 
                       src={doc.image} 
                       alt={doc.name} 
@@ -389,7 +389,7 @@ export default function Home() {
                 transition={{ delay: idx * 0.2 }}
                 className="relative text-center"
               >
-                <div className="h-24 w-24 rounded-[2rem] bg-background border-4 border-primary flex items-center justify-center mx-auto mb-8 shadow-2xl relative z-10">
+                <div className="md:p-8 rounded-4xl bg-primary/5 border border-primary/10 flex items-center justify-center mx-auto mb-8 shadow-2xl relative z-10">
                   <step.icon className="h-10 w-10 text-primary" />
                   <div className="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-black text-sm">
                     {idx + 1}
@@ -425,7 +425,7 @@ export default function Home() {
                 transition={{ delay: idx * 0.1 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <Card className="h-full rounded-[2rem] border-none bg-muted/30 p-10 flex flex-col justify-between">
+                <Card className="h-full rounded-4xl border-none bg-muted/30 p-10 flex flex-col justify-between">
                   <div>
                     <div className="flex text-yellow-500 mb-6">
                       {[1, 2, 3, 4, 5].map((i) => <Star key={i} className="h-5 w-5 fill-current" />)}
