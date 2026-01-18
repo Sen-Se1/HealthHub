@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     response.headers.set("Set-Cookie", "auth_token=; Path=/; HttpOnly; Max-Age=0")
     return response
   } catch (error) {
-    console.error("[v0] Logout error:", error)
+    console.error("Logout error:", error)
     return Response.json({ error: "Logout failed" }, { status: 500 })
   }
 }

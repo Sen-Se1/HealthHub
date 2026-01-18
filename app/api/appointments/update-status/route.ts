@@ -32,7 +32,7 @@ export async function PUT(request: Request) {
       return Response.json({ error: "Appointment not found" }, { status: 404 })
     }
   } catch (error) {
-    console.error("[v0] Update appointment error:", error)
+    console.error("Update appointment error:", error)
     return Response.json({ error: "Failed to update appointment" }, { status: 500 })
   }
 }

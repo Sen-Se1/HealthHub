@@ -36,7 +36,7 @@ export default function PatientDashboardContent() {
           setAppointments(data.appointments || [])
         }
       } catch (err) {
-        console.error("[v0] Error fetching appointments:", err)
+        console.error("Error fetching appointments:", err)
       } finally {
         setLoading(false)
       }

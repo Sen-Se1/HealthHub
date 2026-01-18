@@ -94,7 +94,7 @@ export async function GET(request: Request) {
 
     return Response.json({ doctors })
   } catch (error) {
-    console.error("[v0] Error fetching doctors:", error)
+    console.error("Error fetching doctors:", error)
     return Response.json({ error: "Failed to fetch doctors" }, { status: 500 })
   }
 }

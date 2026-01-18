@@ -37,7 +37,7 @@ export default function DoctorDashboardContent() {
           setStats({ pending, approved, total: data.appointments?.length || 0 })
         }
       } catch (err) {
-        console.error("[v0] Error fetching appointments:", err)
+        console.error("Error fetching appointments:", err)
       } finally {
         setLoading(false)
       }
@@ -66,7 +66,7 @@ export default function DoctorDashboardContent() {
         setStats((prev) => ({ ...prev, pending, approved }))
       }
     } catch (err) {
-      console.error("[v0] Error updating appointment:", err)
+      console.error("Error updating appointment:", err)
     }
   }
 

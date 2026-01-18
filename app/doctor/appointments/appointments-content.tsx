@@ -34,7 +34,7 @@ export default function DoctorAppointmentsContent() {
           setAppointments(data.appointments || [])
         }
       } catch (err) {
-        console.error("[v0] Error fetching appointments:", err)
+        console.error("Error fetching appointments:", err)
       } finally {
         setLoading(false)
       }
@@ -56,7 +56,7 @@ export default function DoctorAppointmentsContent() {
         setAppointments((prev) => prev.map((a) => (a.id === appointmentId ? { ...a, status } : a)))
       }
     } catch (err) {
-      console.error("[v0] Error updating appointment:", err)
+      console.error("Error updating appointment:", err)
     }
   }
 

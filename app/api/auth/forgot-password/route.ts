@@ -1,14 +1,18 @@
 import { prisma } from "@/lib/db"
 import { createPasswordResetToken } from "@/lib/auth"
 import { sendEmail } from "@/lib/email"
+import { forgotPasswordSchema } from "@/lib/validations"
 
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json()
+    const body = await request.json()
+    const result = forgotPasswordSchema.safeParse(body)
 
-    if (!email) {
-      return Response.json({ error: "Email required" }, { status: 400 })
+    if (!result.success) {
+      return Response.json({ error: result.error.errors[0].message }, { status: 400 })
     }
+
+    const { email } = result.data
 
     const user = await prisma.user.findUnique({
       where: { email },

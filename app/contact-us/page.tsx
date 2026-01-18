@@ -10,7 +10,55 @@ import { Label } from "@/components/ui/label"
 import { Mail, MapPin, Phone, Send, ArrowLeft } from "lucide-react"
 import { motion } from "framer-motion"
 
-export default function ContactUs() {
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { contactSchema } from "@/lib/validations"
+import { toast } from "sonner"
+import { useState } from "react"
+
+export default function ContactUsPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { 
+    register, 
+    handleSubmit, 
+    reset,
+    formState: { errors } 
+  } = useForm({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      subject: "",
+      message: "",
+    }
+  })
+
+  const onSubmit = async (data: any) => {
+    setIsSubmitting(true)
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+
+      if (res.ok) {
+        toast.success("Message sent successfully!", {
+          description: "We'll get back to you as soon as possible.",
+        })
+        reset()
+      } else {
+        const result = await res.json()
+        toast.error(result.error || "Failed to send message")
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred. Please try again later.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -142,35 +190,41 @@ export default function ContactUs() {
               <Card className="glass-card border-none h-full">
                 <CardContent className="p-8">
                   <h3 className="text-2xl font-bold mb-6">Send us a Message</h3>
-                  <form className="space-y-6">
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" placeholder="John" />
+                        <Input id="firstName" {...register("firstName")} placeholder="John" />
+                        {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" placeholder="Doe" />
+                        <Input id="lastName" {...register("lastName")} placeholder="Doe" />
+                        {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="john@example.com" />
+                      <Input id="email" type="email" {...register("email")} placeholder="john@example.com" />
+                      {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="subject">Subject</Label>
-                      <Input id="subject" placeholder="How can we help?" />
+                      <Input id="subject" {...register("subject")} placeholder="How can we help?" />
+                      {errors.subject && <p className="text-xs text-destructive">{errors.subject.message}</p>}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="message">Message</Label>
                       <Textarea 
                         id="message" 
+                        {...register("message")}
                         placeholder="Tell us more about your inquiry..." 
                         className="min-h-[150px]"
                       />
+                      {errors.message && <p className="text-xs text-destructive">{errors.message.message}</p>}
                     </div>
-                    <Button className="w-full h-12 text-lg shadow-lg shadow-primary/20">
-                      Send Message <Send className="h-4 w-4 ml-2" />
+                    <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg shadow-lg shadow-primary/20">
+                      {isSubmitting ? "Sending..." : "Send Message"} <Send className="h-4 w-4 ml-2" />
                     </Button>
                   </form>
                 </CardContent>

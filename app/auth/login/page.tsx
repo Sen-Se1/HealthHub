@@ -12,25 +12,28 @@ import { AlertCircle, Loader2, ArrowRight, ArrowLeft, Lock, Mail } from "lucide-
 import { motion } from "framer-motion"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema } from "@/lib/validations"
+import { toast } from "sonner"
+
 export default function LoginPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors } 
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    }
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+  const onSubmit = async (formData: any) => {
     setLoading(true)
 
     try {
@@ -43,14 +46,18 @@ export default function LoginPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || "Login failed")
+        toast.error(data.error || "Login failed")
         return
       }
+
+      toast.success("Welcome back!", {
+        description: `Logged in as ${data.user.firstName} ${data.user.lastName}`,
+      })
 
       // Token is now handled via HttpOnly cookie set by the server
       router.push(data.user.role === "patient" ? "/patient/dashboard" : "/doctor/dashboard")
     } catch (err) {
-      setError("An error occurred during login")
+      toast.error("An error occurred during login")
     } finally {
       setLoading(false)
     }
@@ -95,30 +102,17 @@ export default function LoginPage() {
             <CardDescription>Sign in to your account to continue</CardDescription>
           </CardHeader>
           <CardContent>
-            {error && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6 text-sm"
-              >
-                <AlertCircle className="h-4 w-4" />
-                {error}
-              </motion.div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   placeholder="name@example.com"
                   type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
+                  {...register("email")}
                   className="bg-background/50"
                 />
+                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -132,12 +126,10 @@ export default function LoginPage() {
                   id="password"
                   placeholder="Enter your password"
                   type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
+                  {...register("password")}
                   className="bg-background/50"
                 />
+                {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
               </div>
 
               <Button type="submit" disabled={loading} className="w-full h-11 text-base shadow-lg shadow-primary/20">

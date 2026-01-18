@@ -8,7 +8,7 @@ export async function GET(request: Request) {
       return Response.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    let appointments
+    let appointments: any[] = []
 
     if (user.role === "patient") {
       const patient = await prisma.patient.findUnique({
@@ -69,7 +69,7 @@ export async function GET(request: Request) {
 
     return Response.json({ appointments })
   } catch (error) {
-    console.error("[v0] Get appointments error:", error)
+    console.error("Get appointments error:", error)
     return Response.json({ error: "Failed to fetch appointments" }, { status: 500 })
   }
 }

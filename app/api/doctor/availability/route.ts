@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
     return Response.json({ availability })
   } catch (error) {
-    console.error("[v0] Get availability error:", error)
+    console.error("Get availability error:", error)
     return Response.json({ error: "Failed to fetch availability" }, { status: 500 })
   }
 }
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       { status: 201 },
     )
   } catch (error) {
-    console.error("[v0] Add availability error:", error)
+    console.error("Add availability error:", error)
     return Response.json({ error: "Failed to add availability" }, { status: 500 })
   }
 }

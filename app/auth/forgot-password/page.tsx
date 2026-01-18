@@ -11,14 +11,21 @@ import { AlertCircle, CheckCircle, Loader2, ArrowLeft } from "lucide-react"
 import { motion } from "framer-motion"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { forgotPasswordSchema } from "@/lib/validations"
+import { toast } from "sonner"
+
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
-  const [email, setEmail] = useState("")
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(forgotPasswordSchema)
+  })
+
+  const onSubmit = async (values: any) => {
     setError("")
     setSuccess(false)
     setLoading(true)
@@ -27,19 +34,26 @@ export default function ForgotPasswordPage() {
       const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify(values),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || "Failed to send reset link")
+        const errorMsg = data.error || "Failed to send reset link"
+        setError(errorMsg)
+        toast.error(errorMsg)
         return
       }
 
       setSuccess(true)
+      toast.success("Reset link sent!", {
+        description: "Please check your inbox for instructions."
+      })
     } catch (err) {
-      setError("An error occurred. Please try again.")
+      const errorMsg = "An error occurred. Please try again."
+      setError(errorMsg)
+      toast.error(errorMsg)
     } finally {
       setLoading(false)
     }
@@ -116,18 +130,21 @@ export default function ForgotPasswordPage() {
                 </Button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     placeholder="name@example.com"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                    {...register("email")}
                     className="bg-background/50 h-11"
                   />
+                  {errors.email && (
+                    <p className="text-xs text-destructive mt-1 font-medium italic">
+                      {errors.email.message as string}
+                    </p>
+                  )}
                 </div>
 
                 <Button type="submit" disabled={loading} className="w-full h-11 text-base shadow-lg shadow-primary/20">

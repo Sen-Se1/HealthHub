@@ -48,7 +48,7 @@ function ChatContent() {
           setConversations(convs)
         }
       } catch (err) {
-        console.error("[v0] Error fetching conversations:", err)
+        console.error("Error fetching conversations:", err)
       } finally {
         setLoading(false)
       }

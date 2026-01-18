@@ -41,7 +41,7 @@ export default function DoctorChatContent() {
           setConversations(data.conversations || [])
         }
       } catch (err) {
-        console.error("[v0] Error fetching conversations:", err)
+        console.error("Error fetching conversations:", err)
       } finally {
         setLoading(false)
       }

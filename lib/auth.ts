@@ -64,13 +64,16 @@ export async function invalidateSession(token: string) {
       where: { token },
     })
   } catch (err) {
-    // Session might not exist
   }
 }
 
 export async function createPasswordResetToken(userId: number): Promise<string> {
   const token = crypto.randomBytes(32).toString("hex")
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+
+  await prisma.passwordResetToken.deleteMany({
+    where: { user_id: userId },
+  })
 
   await prisma.passwordResetToken.create({
     data: {

@@ -45,7 +45,7 @@ export default function AvailabilityContent() {
           setAvailability(data.availability || [])
         }
       } catch (err) {
-        console.error("[v0] Error fetching availability:", err)
+        console.error("Error fetching availability:", err)
       } finally {
         setLoading(false)
       }
@@ -80,7 +80,7 @@ export default function AvailabilityContent() {
         setAvailability((prev) => [...prev, data.availability])
       }
     } catch (err) {
-      console.error("[v0] Error adding availability:", err)
+      console.error("Error adding availability:", err)
     } finally {
       setAdding(false)
     }

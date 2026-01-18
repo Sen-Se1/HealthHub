@@ -12,76 +12,70 @@ import { User, Mail, Lock, Stethoscope, Loader2, ArrowLeft, ArrowRight, AlertCir
 import { motion } from "framer-motion"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { registerSchema } from "@/lib/validations"
+import { toast } from "sonner"
+import { z } from "zod"
+import { PhoneInput } from "@/components/ui/phone-input"
+
 export default function RegisterPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
-    phone: "",
-    role: "patient",
+  
+  const { 
+    register, 
+    handleSubmit, 
+    setValue,
+    watch,
+    control,
+    formState: { errors } 
+  } = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      role: "patient",
+    }
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
-  }
+  const currentRole = watch("role")
 
-  const handleRoleChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      role: value,
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
-      return
-    }
-
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters")
-      return
-    }
-
+  const onSubmit = async (data: any) => {
     setLoading(true)
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          role: formData.role,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone,
-        }),
+        body: JSON.stringify(data),
       })
 
-      const data = await res.json()
+      const responseData = await res.json()
 
       if (!res.ok) {
-        setError(data.error || "Registration failed")
+        toast.error(responseData.error || "Registration failed")
         return
       }
 
-      router.push(formData.role === "patient" ? "/patient/dashboard" : "/doctor/dashboard")
+      toast.success("Account created successfully!", {
+        description: "Welcome to HealthHub.",
+      })
+
+      router.push(data.role === "patient" ? "/patient/dashboard" : "/doctor/dashboard")
     } catch (err) {
-      setError("An error occurred during registration")
+      toast.error("An error occurred during registration")
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleRoleChange = (role: "patient" | "doctor") => {
+    setValue("role", role)
   }
 
   return (
@@ -123,32 +117,21 @@ export default function RegisterPage() {
             <CardDescription>Join HealthHub to manage your healthcare</CardDescription>
           </CardHeader>
           <CardContent>
-            {error && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6 text-sm"
-              >
-                <AlertCircle className="h-4 w-4" />
-                {error}
-              </motion.div>
-            )}
-
             {/* Role Selection */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               <button
                 type="button"
                 onClick={() => handleRoleChange("patient")}
                 className={`p-4 rounded-xl border-2 transition-all duration-200 text-center ${
-                  formData.role === "patient" 
+                  currentRole === "patient" 
                     ? "border-primary bg-primary/10 shadow-inner" 
                     : "border-border/50 hover:border-primary/50 hover:bg-secondary/50"
                 }`}
               >
                 <User
-                  className={`h-8 w-8 mx-auto mb-2 ${formData.role === "patient" ? "text-primary" : "text-muted-foreground"}`}
+                  className={`h-8 w-8 mx-auto mb-2 ${currentRole === "patient" ? "text-primary" : "text-muted-foreground"}`}
                 />
-                <p className={`font-semibold ${formData.role === "patient" ? "text-primary" : "text-foreground"}`}>
+                <p className={`font-semibold ${currentRole === "patient" ? "text-primary" : "text-foreground"}`}>
                   Patient
                 </p>
               </button>
@@ -156,45 +139,41 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => handleRoleChange("doctor")}
                 className={`p-4 rounded-xl border-2 transition-all duration-200 text-center ${
-                  formData.role === "doctor" 
+                  currentRole === "doctor" 
                     ? "border-primary bg-primary/10 shadow-inner" 
                     : "border-border/50 hover:border-primary/50 hover:bg-secondary/50"
                 }`}
               >
                 <Stethoscope
-                  className={`h-8 w-8 mx-auto mb-2 ${formData.role === "doctor" ? "text-primary" : "text-muted-foreground"}`}
+                  className={`h-8 w-8 mx-auto mb-2 ${currentRole === "doctor" ? "text-primary" : "text-muted-foreground"}`}
                 />
-                <p className={`font-semibold ${formData.role === "doctor" ? "text-primary" : "text-foreground"}`}>
+                <p className={`font-semibold ${currentRole === "doctor" ? "text-primary" : "text-foreground"}`}>
                   Doctor
                 </p>
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
-                    name="firstName"
                     placeholder="John"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    required
+                    {...register("firstName")}
                     className="bg-background/50"
                   />
+                  {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
-                    name="lastName"
                     placeholder="Doe"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    required
+                    {...register("lastName")}
                     className="bg-background/50"
                   />
+                  {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
                 </div>
               </div>
 
@@ -203,26 +182,28 @@ export default function RegisterPage() {
                 <Input
                   id="email"
                   type="email"
-                  name="email"
                   placeholder="name@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
+                  {...register("email")}
                    className="bg-background/50"
                 />
+                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone (optional)</Label>
-                <Input
-                  id="phone"
-                  type="tel"
+                <Controller
                   name="phone"
-                  placeholder="+1 (555) 000-0000"
-                  value={formData.phone}
-                  onChange={handleChange}
-                   className="bg-background/50"
+                  control={control}
+                  render={({ field }) => (
+                    <PhoneInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={loading}
+                      placeholder="Enter phone number"
+                    />
+                  )}
                 />
+                {errors.phone && <p className="text-xs text-destructive">{errors.phone.message as string}</p>}
               </div>
 
               <div className="space-y-2">
@@ -230,27 +211,22 @@ export default function RegisterPage() {
                 <Input
                   id="password"
                   type="password"
-                  name="password"
-                  placeholder="At least 8 characters"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
+                  placeholder="At least 6 characters"
+                  {...register("password")}
                    className="bg-background/50"
                 />
+                {errors.password && <p className="text-xs text-destructive">{errors.password.message as string}</p>}
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  name="confirmPassword"
                   placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
+                  {...register("confirmPassword")}
                    className="bg-background/50"
                 />
+                {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message as string}</p>}
               </div>
 
               <Button type="submit" disabled={loading} className="w-full h-11 text-base shadow-lg shadow-primary/20">

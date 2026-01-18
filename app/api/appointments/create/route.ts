@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db"
 import { verifyAuth } from "@/lib/middleware"
+import { appointmentSchema } from "@/lib/validations"
 
 export async function POST(request: Request) {
   try {
@@ -8,11 +9,14 @@ export async function POST(request: Request) {
       return Response.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { doctorId, appointmentDate, reasonForVisit } = await request.json()
+    const body = await request.json()
+    const result = appointmentSchema.safeParse(body)
 
-    if (!doctorId || !appointmentDate) {
-      return Response.json({ error: "Missing required fields" }, { status: 400 })
+    if (!result.success) {
+      return Response.json({ error: result.error.errors[0].message }, { status: 400 })
     }
+
+    const { doctorId, appointmentDate, reasonForVisit } = result.data
 
     const patient = await prisma.patient.findUnique({
       where: { user_id: user.id },
@@ -41,7 +45,7 @@ export async function POST(request: Request) {
       { status: 201 },
     )
   } catch (error) {
-    console.error("[v0] Appointment creation error:", error)
+    console.error("Appointment creation error:", error)
     return Response.json({ error: "Failed to create appointment" }, { status: 500 })
   }
 }

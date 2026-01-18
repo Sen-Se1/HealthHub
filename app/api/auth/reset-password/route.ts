@@ -1,13 +1,17 @@
 import { prisma } from "@/lib/db"
 import { verifyPasswordResetToken, hashPassword } from "@/lib/auth"
+import { resetPasswordSchema } from "@/lib/validations"
 
 export async function POST(request: Request) {
   try {
-    const { token, password } = await request.json()
+    const body = await request.json()
+    const result = resetPasswordSchema.safeParse(body)
 
-    if (!token || !password) {
-      return Response.json({ error: "Token and password required" }, { status: 400 })
+    if (!result.success) {
+      return Response.json({ error: result.error.errors[0].message }, { status: 400 })
     }
+
+    const { token, password } = result.data
 
     const resetToken = await verifyPasswordResetToken(token)
 

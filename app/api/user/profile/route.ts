@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
 import { verifyAuth } from "@/lib/middleware"
+import { patientProfileSchema, doctorProfileSchema } from "@/lib/validations"
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,6 +41,21 @@ export async function PUT(request: NextRequest) {
 
     let body: any = {}
     const contentType = request.headers.get("content-type") || ""
+    let currentUser: any = null
+    let newProfilePictureUrl: string | null = null
+    let newCvUrl: string | null = null
+    const path = require("path")
+    const fs = require("fs/promises")
+
+    const deleteFile = async (relativeUrl: string | null) => {
+      if (!relativeUrl) return
+      try {
+        const absolutePath = path.join(process.cwd(), "public", relativeUrl)
+        await fs.unlink(absolutePath)
+      } catch (e) {
+        console.error(`Failed to delete file: ${relativeUrl}`, e)
+      }
+    }
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await request.formData()
@@ -65,52 +81,67 @@ export async function PUT(request: NextRequest) {
         bio: getString("bio"),
       }
 
-      // Handle Files
-      const processFile = async (fileKey: string, folder: string = "uploads") => {
-        const file = formData.get(fileKey) as File | null
-        if (file && file.size > 0) {
+    // Fetch current user info to handle file deletion
+    currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { doctor: true }
+    })
+
+    const processFile = async (fileKey: string, folder: string = "uploads") => {
+      const file = formData.get(fileKey) as File | null
+      if (file && file.size > 0) {
+        try {
+          const bytes = await file.arrayBuffer()
+          const buffer = Buffer.from(bytes)
+          
+          // Create unique filename
+          const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`
+          
+          // Ensure directory exists
+          const uploadDir = path.join(process.cwd(), "public", folder)
           try {
-            const bytes = await file.arrayBuffer()
-            const buffer = Buffer.from(bytes)
-            
-            // Create unique filename
-            const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`
-            const path = require("path")
-            const fs = require("fs/promises")
-            
-            // Ensure directory exists
-            const uploadDir = path.join(process.cwd(), "public", folder)
-            try {
-              await fs.access(uploadDir)
-            } catch {
-              await fs.mkdir(uploadDir, { recursive: true })
-            }
-            
-            await fs.writeFile(path.join(uploadDir, filename), buffer)
-            return `/${folder}/${filename}`
-          } catch (e) {
-            console.error(`Error saving ${fileKey}:`, e)
-            return null
+            await fs.access(uploadDir)
+          } catch {
+            await fs.mkdir(uploadDir, { recursive: true })
           }
+          
+          await fs.writeFile(path.join(uploadDir, filename), buffer)
+          return `/${folder}/${filename}`
+        } catch (e) {
+          console.error(`Error saving ${fileKey}:`, e)
+          return null
         }
-        return null
       }
+      return null
+    }
 
-      const profilePictureUrl = await processFile("profilePicture")
-      if (profilePictureUrl) body.profilePictureUrl = profilePictureUrl
+    newProfilePictureUrl = await processFile("profilePicture")
+    if (newProfilePictureUrl) {
+      body.profilePictureUrl = newProfilePictureUrl
+    }
 
-      const cvUrl = await processFile("cv")
-      if (cvUrl) body.cvUrl = cvUrl
+    newCvUrl = await processFile("cv")
+    if (newCvUrl) {
+      body.cvUrl = newCvUrl
+    }
 
     } else {
       body = await request.json()
+    }
+
+    // Validate based on role
+    const validationSchema = userRole === "patient" ? patientProfileSchema : doctorProfileSchema
+    const result = validationSchema.safeParse(body)
+
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 })
     }
 
     const { 
       firstName, lastName, phone, dateOfBirth, gender, address, medicalHistory, profilePictureUrl,
       // Doctor specific fields
       specialization, qualification, experienceYears, bio, cvUrl 
-    } = body
+    } = result.data as any
 
     // Update user basic info and profile
     await prisma.user.update({
@@ -119,7 +150,7 @@ export async function PUT(request: NextRequest) {
         first_name: firstName,
         last_name: lastName,
         phone: phone,
-        // Only update if provided
+        // Update profile picture for any role
         ...(profilePictureUrl && { profile_picture_url: profilePictureUrl }),
         patient:
           userRole === "patient"
@@ -146,6 +177,14 @@ export async function PUT(request: NextRequest) {
             : undefined,
       },
     })
+
+    // Delete old files AFTER successful DB update
+    if (newProfilePictureUrl && currentUser?.profile_picture_url) {
+      await deleteFile(currentUser.profile_picture_url)
+    }
+    if (newCvUrl && currentUser?.doctor?.cv_url) {
+      await deleteFile(currentUser.doctor.cv_url)
+    }
 
     // Fetch updated user to return
     const updatedUser = await prisma.user.findUnique({

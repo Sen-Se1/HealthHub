@@ -29,42 +29,62 @@ interface DoctorProfile {
   profile_picture_url?: string
 }
 
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { doctorProfileSchema } from "@/lib/validations"
+import { PhoneInput } from "@/components/ui/phone-input"
+import { toast } from "sonner"
+import { z } from "zod"
+
 export default function DoctorProfileContent() {
   const router = useRouter()
   const [profile, setProfile] = useState<DoctorProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [uploadingPic, setUploadingPic] = useState(false)
   const [editingInfo, setEditingInfo] = useState(false)
   const [selectedPic, setSelectedPic] = useState<File | null>(null)
   const [selectedCv, setSelectedCv] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const picInputRef = useRef<HTMLInputElement>(null)
-  const [formData, setFormData] = useState({
-    phone: "",
-    specialization: "",
-    qualification: "",
-    experienceYears: "",
-    bio: "",
-    cvUrl: "",
-    profilePictureUrl: "",
+
+  const { 
+    register, 
+    handleSubmit, 
+    reset,
+    setValue,
+    watch,
+    control,
+    formState: { errors } 
+  } = useForm({
+    resolver: zodResolver(doctorProfileSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      phone: "",
+      specialization: "",
+      qualification: "",
+      experienceYears: 0,
+      bio: "",
+      cvUrl: "",
+      profilePictureUrl: "",
+    }
   })
 
   useEffect(() => {
     const fetchProfile = async () => {
-      // Token is now handled via HttpOnly cookie
       try {
         const res = await fetch("/api/user/profile")
 
         if (res.ok) {
           const data = await res.json()
           setProfile(data.user) 
-          setFormData({
+          reset({
+            firstName: data.user.first_name || "",
+            lastName: data.user.last_name || "",
             phone: data.user.phone || "",
             specialization: data.user.specialization || "",
             qualification: data.user.qualification || "",
-            experienceYears: data.user.experience_years?.toString() || "",
+            experienceYears: data.user.experience_years || 0,
             bio: data.user.bio || "",
             cvUrl: data.user.cv_url || "",
             profilePictureUrl: data.user.profile_picture_url || "",
@@ -78,14 +98,7 @@ export default function DoctorProfileContent() {
     }
 
     fetchProfile()
-  }, [router])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
-  }
+  }, [router, reset])
 
   const handleProfilePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -94,15 +107,9 @@ export default function DoctorProfileContent() {
     setSelectedPic(file)
     const previewUrl = URL.createObjectURL(file)
     
-    setFormData(prev => ({ ...prev, profilePictureUrl: previewUrl }))
+    setValue("profilePictureUrl", previewUrl)
     setProfile(prev => prev ? { ...prev, profile_picture_url: previewUrl } : null)
-    // For profile picture, we allow saving via any save button essentially, 
-    // or arguably it should prompt immediate save. 
-    // Given the request pattern, let's just leave it pending until any save is triggered.
-    // However, if the user only sees "Save" buttons in specific sections, we should maybe ensure 
-    // the profile picture edit is saved with the "Professional Information" or add a global save (not requested).
-    // Let's assume Profile Picture changes are saved with "Professional Info" for now, or we can auto-save.
-    // The prompt only asked for specific buttons for CV and Info.
+    setEditingInfo(true)
   }
 
   const handleCVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,18 +123,17 @@ export default function DoctorProfileContent() {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ]
     if (!allowedTypes.includes(file.type)) {
-      alert("Please upload a PDF or Word document")
+      toast.error("Please upload a PDF or Word document")
       return
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert("File size must be less than 5MB")
+      toast.error("File size must be less than 5MB")
       return
     }
 
     setSelectedCv(file)
-    // Reset the input so the same file can be selected again if cancelled
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
@@ -135,17 +141,19 @@ export default function DoctorProfileContent() {
     setSelectedCv(null)
   }
 
-  const handleSave = async (section: "info" | "cv") => {
+  const onSubmit = async (data: any, section: "info" | "cv") => {
     setSaving(true)
 
     try {
       const formDataToSend = new FormData()
       
-      formDataToSend.append("phone", formData.phone)
-      formDataToSend.append("specialization", formData.specialization)
-      formDataToSend.append("qualification", formData.qualification)
-      formDataToSend.append("experienceYears", formData.experienceYears)
-      formDataToSend.append("bio", formData.bio)
+      formDataToSend.append("firstName", data.firstName)
+      formDataToSend.append("lastName", data.lastName)
+      formDataToSend.append("phone", data.phone)
+      formDataToSend.append("specialization", data.specialization)
+      formDataToSend.append("qualification", data.qualification)
+      formDataToSend.append("experienceYears", data.experienceYears.toString())
+      formDataToSend.append("bio", data.bio)
       
       if (selectedPic) {
         formDataToSend.append("profilePicture", selectedPic)
@@ -161,46 +169,36 @@ export default function DoctorProfileContent() {
       })
 
       if (res.ok) {
-        const data = await res.json()
+        const responseData = await res.json()
         
-        // Update profile with returned data which now includes new URLs and phone
-        if (data.user) {
-            setProfile(data.user)
-            
-            // Update formData to match new state
-            setFormData(prev => ({
-                ...prev,
-                phone: data.user.phone || "",
-                specialization: data.user.specialization || "",
-                qualification: data.user.qualification || "",
-                experienceYears: data.user.experience_years?.toString() || "",
-                bio: data.user.bio || "",
-                cvUrl: data.user.cv_url || "",
-                profilePictureUrl: data.user.profile_picture_url || "",
-            }))
-        } else {
-             // Fallback if for some reason user object isn't returned (shouldn't happen with new backend)
-             // We can still try to optimistic update or just keep previous logic essentially
-             setProfile((prev) => (prev ? { 
-                ...prev, 
-                ...data.doctor, // This might not exist in new response structure, dependent on backend
-                // effectively rely on data.user check above
-             } : null))
+        if (responseData.user) {
+            setProfile(responseData.user)
+            reset({
+              firstName: responseData.user.first_name || "",
+              lastName: responseData.user.last_name || "",
+              phone: responseData.user.phone || "",
+              specialization: responseData.user.specialization || "",
+              qualification: responseData.user.qualification || "",
+              experienceYears: responseData.user.experience_years || 0,
+              bio: responseData.user.bio || "",
+              cvUrl: responseData.user.cv_url || "",
+              profilePictureUrl: responseData.user.profile_picture_url || "",
+            })
         }
 
         if (section === "info") setEditingInfo(false)
         if (section === "cv") setSelectedCv(null)
-        
         if (selectedPic) setSelectedPic(null)
 
+        toast.success("Profile updated successfully")
         window.dispatchEvent(new Event("profile-updated"))
-        // Removed window.location.reload()
       } else {
-        alert("Failed to save profile")
+        const errorData = await res.json()
+        toast.error(errorData.error || "Failed to save profile")
       }
     } catch (err) {
       console.error("Error saving profile:", err)
-      alert("Error saving profile")
+      toast.error("Error saving profile")
     } finally {
       setSaving(false)
     }
@@ -269,10 +267,10 @@ export default function DoctorProfileContent() {
                         />
                         <button 
                             onClick={() => picInputRef.current?.click()}
-                            disabled={uploadingPic}
+                            disabled={saving}
                             className={`absolute bottom-0 right-0 p-1.5 bg-primary text-primary-foreground rounded-full shadow-lg translate-y-1/4 translate-x-1/4 transition-opacity hover:bg-primary/90 ${editingInfo ? "opacity-100" : "opacity-0 hidden"}`}
                         >
-                            {uploadingPic ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+                            {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
                         </button>
                      </div>
                      
@@ -363,39 +361,63 @@ export default function DoctorProfileContent() {
                         </div>
                     </div>
                   </div>
-                  <div className="p-4 bg-secondary/30 rounded-lg">
-                     <div className="flex items-center gap-2 mb-2">
-                         <FileText className="h-5 w-5 text-primary" />
-                         <Label className="text-muted-foreground text-sm">Bio</Label>
+                  <div className="p-5 bg-secondary/30 rounded-xl border border-border/50">
+                     <div className="flex items-center gap-2 mb-3">
+                         <div className="p-1.5 rounded-md bg-primary/10">
+                            <FileText className="h-4 w-4 text-primary" />
+                         </div>
+                         <Label className="text-foreground font-semibold text-sm">Biography</Label>
                      </div>
-                    <p className="text-foreground mt-2 leading-relaxed">{profile.bio || "No biography provided yet."}</p>
+                     <div className="max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap wrap-break-word text-sm md:text-base italic">
+                            {profile.bio || "No biography provided yet."}
+                        </p>
+                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4 animate-in fade-in duration-300">
+                <form onSubmit={handleSubmit((d) => onSubmit(d, "info"))} className="space-y-4 animate-in fade-in duration-300">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                        id="firstName"
+                        {...register("firstName")}
+                        className="bg-background/50"
+                        />
+                        {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                        id="lastName"
+                        {...register("lastName")}
+                        className="bg-background/50"
+                        />
+                        {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="specialization">Specialization</Label>
                       <Input
                         id="specialization"
-                        name="specialization"
-                        value={formData.specialization}
-                        onChange={handleChange}
+                        {...register("specialization")}
                         placeholder="e.g., Cardiology, Pediatrics"
                         className="bg-background/50"
                       />
+                      {errors.specialization && <p className="text-xs text-destructive">{errors.specialization.message}</p>}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="experienceYears">Years of Experience</Label>
                       <Input
                         id="experienceYears"
-                        name="experienceYears"
                         type="number"
-                        value={formData.experienceYears}
-                        onChange={handleChange}
+                        {...register("experienceYears", { valueAsNumber: true })}
                         placeholder="e.g., 10"
                         className="bg-background/50"
                       />
+                      {errors.experienceYears && <p className="text-xs text-destructive">{errors.experienceYears.message}</p>}
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -403,48 +425,58 @@ export default function DoctorProfileContent() {
                         <Label htmlFor="qualification">Qualification</Label>
                         <Input
                         id="qualification"
-                        name="qualification"
-                        value={formData.qualification}
-                        onChange={handleChange}
+                        {...register("qualification")}
                         placeholder="e.g., MD, MBBS, PhD"
                         className="bg-background/50"
                         />
+                        {errors.qualification && <p className="text-xs text-destructive">{errors.qualification.message}</p>}
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="phone">Phone</Label>
-                        <Input
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="e.g., +123456789"
-                        className="bg-background/50"
+                        <Controller
+                          name="phone"
+                          control={control}
+                          render={({ field }) => (
+                            <PhoneInput
+                              value={field.value}
+                              onChange={field.onChange}
+                              disabled={saving}
+                            />
+                          )}
                         />
+                        {errors.phone && <p className="text-xs text-destructive">{errors.phone.message as string}</p>}
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bio">Bio</Label>
                     <Textarea
                       id="bio"
-                      name="bio"
-                      value={formData.bio}
-                      onChange={handleChange}
-                      placeholder="Write a brief description about yourself..."
-                      rows={4}
-                      className="bg-background/50 resize-none"
+                      {...register("bio")}
+                      placeholder="Write a brief professional description about your background, expertise, and patient care approach..."
+                      className="bg-background/50 min-h-[160px] max-h-[400px] leading-relaxed resize-y focus-visible:ring-primary/30 custom-scrollbar"
                     />
+                    {errors.bio && <p className="text-xs text-destructive">{errors.bio.message}</p>}
                   </div>
                   <div className="flex gap-2 pt-2">
-                    <Button onClick={() => handleSave("info")} disabled={saving} className="shadow-md">
-                      <Save className="h-4 w-4 mr-2" />
-                      {saving ? "Saving..." : "Save Changes"}
+                    <Button type="submit" disabled={saving} className="shadow-md">
+                      {saving ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Changes
+                        </>
+                      )}
                     </Button>
-                    <Button variant="outline" onClick={() => setEditingInfo(false)}>
+                    <Button variant="outline" type="button" onClick={() => setEditingInfo(false)}>
                       <X className="h-4 w-4 mr-2" />
                       Cancel
                     </Button>
                   </div>
-                </div>
+                </form>
               )}
             </CardContent>
           </Card>
@@ -480,7 +512,7 @@ export default function DoctorProfileContent() {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <Button onClick={() => handleSave("cv")} size="sm" disabled={saving}>
+                        <Button onClick={handleSubmit((d) => onSubmit(d, "cv"))} size="sm" disabled={saving}>
                             <Save className="h-4 w-4 mr-2" /> 
                             {saving ? "Saving..." : "Save Changes"}
                         </Button>
@@ -492,7 +524,7 @@ export default function DoctorProfileContent() {
                  </div>
               ) : null}
 
-              {formData.cvUrl && !selectedCv ? (
+              {watch("cvUrl") && !selectedCv ? (
                 <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-xl border border-border/50">
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
@@ -505,7 +537,7 @@ export default function DoctorProfileContent() {
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                      <a href={formData.cvUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                      <a href={watch("cvUrl")} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                         <Eye className="h-4 w-4" />
                         View CV
                       </a>
@@ -514,7 +546,7 @@ export default function DoctorProfileContent() {
                       variant="secondary"
                       size="sm"
                       onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading}
+                      disabled={saving}
                       className="flex items-center gap-2"
                     >
                       <RefreshCw className="h-4 w-4" /> Replace
@@ -530,7 +562,7 @@ export default function DoctorProfileContent() {
                      <Upload className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
                   </div>
                   <p className="text-foreground font-medium">
-                    {uploading ? "Uploading..." : "Click to upload your CV"}
+                    {saving ? "Uploading..." : "Click to upload your CV"}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">PDF or Word document, max 5MB</p>
                 </div>

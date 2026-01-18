@@ -1,13 +1,17 @@
 import { prisma } from "@/lib/db"
 import { hashPassword } from "@/lib/auth"
+import { registerSchema } from "@/lib/validations"
 
 export async function POST(request: Request) {
   try {
-    const { email, password, role, firstName, lastName, phone } = await request.json()
+    const body = await request.json()
+    const result = registerSchema.safeParse(body)
 
-    if (!email || !password || !role || !firstName || !lastName) {
-      return Response.json({ error: "Missing required fields" }, { status: 400 })
+    if (!result.success) {
+      return Response.json({ error: result.error.errors[0].message }, { status: 400 })
     }
+
+    const { email, password, role, firstName, lastName, phone } = result.data
 
     const existing = await prisma.user.findUnique({
       where: { email },

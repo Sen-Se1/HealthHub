@@ -1,13 +1,17 @@
 import { prisma } from "@/lib/db"
 import { verifyPassword, createSession } from "@/lib/auth"
+import { loginSchema } from "@/lib/validations"
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json()
+    const body = await request.json()
+    const result = loginSchema.safeParse(body)
 
-    if (!email || !password) {
-      return Response.json({ error: "Email and password required" }, { status: 400 })
+    if (!result.success) {
+      return Response.json({ error: result.error.errors[0].message }, { status: 400 })
     }
+
+    const { email, password } = result.data
 
     const user = await prisma.user.findUnique({
       where: { email },

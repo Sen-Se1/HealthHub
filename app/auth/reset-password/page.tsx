@@ -12,60 +12,53 @@ import { Lock, Eye, EyeOff, Loader2, CheckCircle, AlertCircle, ArrowLeft, ArrowR
 import { motion } from "framer-motion"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { resetPasswordSchema } from "@/lib/validations"
+import { toast } from "sonner"
+
 function ResetPasswordContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const token = searchParams.get("token")
   
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      token: token || "",
+      password: "",
+      confirmPassword: ""
+    }
+  })
+
+  const onSubmit = async (values: any) => {
     setLoading(true)
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      setLoading(false)
-      return
-    }
-
-    if (password.length < 6) {
-        setError("Password must be at least 6 characters")
-        setLoading(false)
-        return
-    }
-
-    if (!token) {
-        setError("Invalid or missing token")
-        setLoading(false)
-        return
-    }
 
     try {
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ token: values.token, password: values.password }),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || "Failed to reset password")
+        toast.error(data.error || "Failed to reset password")
         return
       }
 
-      setSuccess(true)
+      toast.success("Password reset successfully!", {
+        description: "You can now log in with your new password."
+      })
+      
       setTimeout(() => {
           router.push("/auth/login")
       }, 2000)
     } catch (err) {
-      setError("An error occurred. Please try again.")
+      toast.error("An error occurred. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -95,40 +88,21 @@ function ResetPasswordContent() {
         <CardDescription>Enter your new password below</CardDescription>
       </CardHeader>
       <CardContent>
-        {error && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6 text-sm"
-          >
-            <AlertCircle className="h-4 w-4" />
-            {error}
-          </motion.div>
-        )}
-        
-        {success && (
-             <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 text-green-600 px-4 py-3 rounded-lg mb-6 text-sm"
-             >
-                <CheckCircle2 className="h-4 w-4" />
-                <p>Password reset successfully! Redirecting...</p>
-             </motion.div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="password">New Password</Label>
             <Input
               id="password"
               placeholder="Enter new password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              {...register("password")}
               className="bg-background/50"
             />
+            {errors.password && (
+              <p className="text-xs text-destructive mt-1 font-medium italic">
+                {errors.password.message as string}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -137,11 +111,14 @@ function ResetPasswordContent() {
               id="confirmPassword"
               placeholder="Confirm new password"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
+              {...register("confirmPassword")}
               className="bg-background/50"
             />
+            {errors.confirmPassword && (
+              <p className="text-xs text-destructive mt-1 font-medium italic">
+                {errors.confirmPassword.message as string}
+              </p>
+            )}
           </div>
 
           <Button type="submit" disabled={loading} className="w-full h-11 text-base shadow-lg shadow-primary/20">
