@@ -5,6 +5,8 @@ import './globals.css'
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 
+import { CookieConsent } from "@/components/cookie-consent"
+
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
@@ -46,6 +48,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
           {children}
+          <CookieConsent />
           <Toaster richColors closeButton position="top-right" />
         </ThemeProvider>
         <Analytics />

@@ -119,7 +119,7 @@ export default function FAQPage() {
       {/* Hero Header */}
       <section className="pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-primary/5 -z-10" />
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent -z-10 hidden lg:block" />
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-primary/10 to-transparent -z-10 hidden lg:block" />
         
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -167,7 +167,7 @@ export default function FAQPage() {
       </section>
 
       {/* Categories & Content */}
-      <section className="py-20 bg-muted/30 flex-grow">
+      <section className="py-20 bg-muted/30 grow">
         <div className="container mx-auto px-4 max-w-5xl">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center mb-12">
@@ -250,7 +250,7 @@ export default function FAQPage() {
       <section className="py-32 bg-background border-t border-border/40">
         <div className="container mx-auto px-4">
           <Card className="rounded-[3rem] border-none bg-primary/5 p-12 md:p-20 text-center relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
             
             <div className="relative z-10 max-w-2xl mx-auto">
               <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary/20">
@@ -308,7 +308,7 @@ export default function FAQPage() {
                 <li><Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link></li>
                 <li><Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
                 <li><Link href="/contact-us" className="hover:text-primary transition-colors">Contact Support</Link></li>
-                <li><Link href="/partnership" className="hover:text-primary transition-colors">Partner with Us</Link></li>
+                <li><Link href="/auth/register" className="hover:text-primary transition-colors">Partner with Us</Link></li>
               </ul>
             </div>
             <div>

@@ -551,7 +551,7 @@ export default function Home() {
 
             {[
               { title: "Platform", links: [{n: "Find Doctors", h: "#doctors"}, {n: "Specialties", h: "#specialties"}, {n: "How it Works", h: "#how-it-works"}, {n: "Join as Doctor", h: "#join-as-doctor"}] },
-              { title: "Company", links: [{n: "About Us", h: "#"}, {n: "Contact", h: "/contact-us"}, {n: "Careers", h: "#"}, {n: "News", h: "#"}] },
+              { title: "Company", links: [{n: "About Us", h: "#"}, {n: "Contact", h: "/contact-us"}, {n: "Careers", h: "#"}] },
               { title: "Legal", links: [{n: "Privacy Policy", h: "/privacy-policy"}, {n: "Terms of Service", h: "/terms-of-service"}, {n: "Cookie Policy", h: "#"}, {n: "Legal Notes", h: "#"}] }
             ].map((col, idx) => (
               <div key={idx}>
