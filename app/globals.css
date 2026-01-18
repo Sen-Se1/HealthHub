@@ -12,13 +12,19 @@
   --card-foreground: oklch(0.13 0.01 260);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.13 0.01 260);
-  --primary: oklch(0.45 0.15 175);
+  /* Medical Blue #1E88E5 -> oklch(0.59 0.18 250) */
+  --primary: oklch(0.59 0.18 250);
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.95 0.01 260);
-  --secondary-foreground: oklch(0.13 0.01 260);
+
+  /* Soft Green #43A047 -> oklch(0.63 0.18 145) */
+  --secondary: oklch(0.98 0.02 145);
+  --secondary-foreground: oklch(0.2 0.1 145);
+
   --muted: oklch(0.95 0.01 260);
   --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.45 0.15 175);
+
+  /* Accent: Light Cyan / Soft Blue */
+  --accent: oklch(0.63 0.18 145);
   --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
@@ -42,20 +48,25 @@
 }
 
 .dark {
-  /* Dark Mode */
-  --background: oklch(0.13 0.01 260);
-  --foreground: oklch(0.95 0 0);
-  --card: oklch(0.17 0.01 260);
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.15 0.01 260);
-  --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.75 0.15 175);
-  --primary-foreground: oklch(0.13 0.01 260);
-  --secondary: oklch(0.22 0.01 260);
+  /* Dark Mode - Refined for Medical Aesthetic */
+  --background: oklch(0.15 0.02 260);
+  /* Deeper medical navy */
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.18 0.02 260);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.18 0.02 260);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.65 0.18 250);
+  /* Vibrant medical blue for dark mode */
+  --primary-foreground: oklch(1 0 0);
+
+  --secondary: oklch(0.25 0.05 145);
   --secondary-foreground: oklch(0.95 0 0);
+
   --muted: oklch(0.22 0.01 260);
   --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.75 0.15 175);
+
+  --accent: oklch(0.65 0.15 145);
   --accent-foreground: oklch(0.13 0.01 260);
   --destructive: oklch(0.45 0.18 25);
   --destructive-foreground: oklch(0.95 0 0);
@@ -123,8 +134,16 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+  }
+
   body {
     @apply bg-background text-foreground selection:bg-primary/30;
+    overflow-x: hidden;
   }
 }
 
@@ -139,6 +158,14 @@
 
   .text-glow {
     text-shadow: 0 0 20px var(--primary);
+  }
+
+  .shadow-medical {
+    box-shadow: 0 10px 40px -10px oklch(0.5 0.15 250 / 0.1);
+  }
+
+  .shadow-medical-hover {
+    box-shadow: 0 20px 50px -12px oklch(0.5 0.15 250 / 0.15);
   }
 
   .bg-grid-white {
