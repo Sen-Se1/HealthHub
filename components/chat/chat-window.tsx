@@ -100,14 +100,11 @@ export function ChatWindow({ conversationId, currentUserId, otherUserName }: Cha
 
     if (!newMessage.trim()) return
 
-    const token = localStorage.getItem("authToken")
-
     try {
       await fetch("/api/chat/send-message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           conversationId,

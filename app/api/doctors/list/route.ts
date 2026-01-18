@@ -4,7 +4,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const search = searchParams.get("search") || ""
-    const searchFields = searchParams.getAll("searchFields") // name, specialization, qualification, experience_years, bio
+    const searchFields = searchParams.getAll("searchFields")
     const minExperience = parseInt(searchParams.get("minExperience") || "0")
     const maxExperience = parseInt(searchParams.get("maxExperience") || "100")
     const sortBy = searchParams.get("sortBy") || "relevance" 
@@ -21,7 +21,6 @@ export async function GET(request: Request) {
       const searchMode = "insensitive" as const
       const orConditions: any[] = []
       
-      // Default to searching all text fields if no specific fields selected
       const fields = searchFields.length > 0 ? searchFields : ['name', 'specialization', 'qualification', 'bio']
 
       if (fields.includes('name')) {
@@ -36,7 +35,6 @@ export async function GET(request: Request) {
                 }))
             })
         } else {
-             // Fallback if split results in empty (unlikely with trim)
             orConditions.push({ user: { first_name: { contains: search, mode: searchMode } } })
             orConditions.push({ user: { last_name: { contains: search, mode: searchMode } } })
         }
@@ -67,8 +65,6 @@ export async function GET(request: Request) {
         case "experience_asc":
             orderBy = { experience_years: "asc" }
             break;
-        // visual only for now as price is not in the model yet, or we assume something else
-        // default to id desc for stable sort if relevance
         default:
             orderBy = { id: "desc" }
             break;

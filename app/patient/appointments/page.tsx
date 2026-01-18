@@ -27,16 +27,9 @@ function AppointmentsContent() {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const token = localStorage.getItem("authToken")
-      if (!token) {
-        router.push("/auth/login")
-        return
-      }
-
+      // Token is now handled via HttpOnly cookie
       try {
-        const res = await fetch("/api/appointments/list", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch("/api/appointments/list")
 
         if (res.ok) {
           const data = await res.json()
@@ -124,7 +117,7 @@ function AppointmentsContent() {
                 <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-start gap-4">
-                        <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0 shadow-lg shadow-primary/10">
+                        <div className="h-16 w-16 rounded-2xl bg-linear-to-br from-primary to-accent flex items-center justify-center shrink-0 shadow-lg shadow-primary/10">
                             <span className="text-primary-foreground font-bold text-xl">
                                 {apt.first_name[0]}
                                 {apt.last_name[0]}

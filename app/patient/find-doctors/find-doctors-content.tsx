@@ -125,19 +125,12 @@ export default function FindDoctorsContent() {
       return
     }
 
-    const token = localStorage.getItem("authToken")
-    if (!token) {
-      router.push("/auth/login")
-      return
-    }
-
     setBookingLoading(true)
     try {
       const res = await fetch("/api/appointments/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           doctorId: bookingDoctor.id,

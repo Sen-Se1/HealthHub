@@ -23,17 +23,17 @@ function ChatContent() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken")
-    if (!token) {
-      router.push("/auth/login")
-      return
-    }
-
+    // Token is now handled via HttpOnly cookie
     const fetchConversations = async () => {
       try {
-        const res = await fetch("/api/appointments/list", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        // Fetch profile to get current user ID
+        const profileRes = await fetch("/api/user/profile")
+        if (profileRes.ok) {
+          const profileData = await profileRes.json()
+          setCurrentUserId(profileData.user.id)
+        }
+
+        const res = await fetch("/api/appointments/list")
 
         if (res.ok) {
           const data = await res.json()
@@ -46,7 +46,6 @@ function ChatContent() {
               doctorId: apt.doctor_id,
             }))
           setConversations(convs)
-          setCurrentUserId(1) // Ideally get this from profile/token
         }
       } catch (err) {
         console.error("[v0] Error fetching conversations:", err)
@@ -113,7 +112,7 @@ function ChatContent() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center shrink-0 shadow-sm ${
                          selectedConversation?.id === conv.id ? "bg-primary text-primary-foreground" : "bg-secondary text-primary"
                     }`}>
                       <span className="font-bold text-sm">

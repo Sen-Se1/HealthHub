@@ -27,19 +27,10 @@ export default function PatientDashboardContent() {
   const [userName, setUserName] = useState("Patient")
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken")
-    if (!token) {
-      router.push("/auth/login")
-      return
-    }
-
-    // Isolate user name decoding or fetch profile logic here if available
-    // For now we just fetch appointments
+    // Token is now handled via HttpOnly cookie
     const fetchAppointments = async () => {
       try {
-        const res = await fetch("/api/appointments/list", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch("/api/appointments/list")
         if (res.ok) {
           const data = await res.json()
           setAppointments(data.appointments || [])

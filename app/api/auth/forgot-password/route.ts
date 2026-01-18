@@ -15,16 +15,13 @@ export async function POST(request: Request) {
     })
 
     if (!user) {
-      // We return success to prevent email enumeration
       return Response.json({ message: "If an account exists with this email, a reset link has been sent." })
     }
 
     const token = await createPasswordResetToken(user.id)
 
-    // Send reset email
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`
     
-    // In a real app we'd want a proper email template, but for now HTML body is fine
     await sendEmail(
         email, 
         "Reset Your Password - HealthHub",

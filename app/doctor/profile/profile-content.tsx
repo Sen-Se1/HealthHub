@@ -53,16 +53,9 @@ export default function DoctorProfileContent() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("authToken")
-      if (!token) {
-        router.push("/auth/login")
-        return
-      }
-
+      // Token is now handled via HttpOnly cookie
       try {
-        const res = await fetch("/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch("/api/user/profile")
 
         if (res.ok) {
           const data = await res.json()
@@ -143,15 +136,10 @@ export default function DoctorProfileContent() {
   }
 
   const handleSave = async (section: "info" | "cv") => {
-    const token = localStorage.getItem("authToken")
     setSaving(true)
 
     try {
       const formDataToSend = new FormData()
-      // We send all data to ensure nothing is overwritten with empty state if separate logic existed,
-      // but here we just need to ensure the backend receives what it expects.
-      // The backend updates based on what is provided? Actually it updates everything provided.
-      // So we should send current state of everything to be safe.
       
       formDataToSend.append("phone", formData.phone)
       formDataToSend.append("specialization", formData.specialization)
@@ -163,22 +151,12 @@ export default function DoctorProfileContent() {
         formDataToSend.append("profilePicture", selectedPic)
       }
       
-      // key logic: if we are saving "info" but have a pending CV, should we save the CV?
-      // The prompt suggests distinct save actions.
-      // If I click "Save" on info card, I probably expect only info to save.
-      // If I click "Save" on CV card, only CV.
-      // However, our backend is unified. 
-      // If we send selectedCv only when section === "cv", that works.
-      
       if (section === "cv" && selectedCv) {
         formDataToSend.append("cv", selectedCv)
       }
 
       const res = await fetch("/api/user/profile", {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: formDataToSend
       })
 
@@ -258,7 +236,7 @@ export default function DoctorProfileContent() {
         <div className="grid gap-6">
             {/* Status Card */}
            <Card className="glass-card border-none overflow-hidden group">
-            <div className="h-16 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent relative">
+            <div className="h-16 bg-linear-to-r from-primary/20 via-primary/10 to-transparent relative">
                 <div className="absolute inset-0 bg-grid-white/10" />
             </div>
             <CardContent className="relative pt-0 px-6 sm:px-10 pb-8">

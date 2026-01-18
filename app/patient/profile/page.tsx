@@ -49,17 +49,10 @@ function ProfileContent() {
 
   useEffect(() => {
     // ... code matching original ...
-    const token = localStorage.getItem("authToken")
-    if (!token) {
-      router.push("/auth/login")
-      return
-    }
-
     const fetchProfile = async () => {
+      // Token is now handled via HttpOnly cookie
       try {
-        const res = await fetch("/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch("/api/user/profile")
         if (res.ok) {
           const data = await res.json()
           setProfile(data.user)
@@ -100,9 +93,6 @@ function ProfileContent() {
   }
 
   const handleSave = async () => {
-    const token = localStorage.getItem("authToken")
-    if (!token) return
-
     setSaving(true)
     try {
       const formDataToSend = new FormData()
@@ -120,9 +110,6 @@ function ProfileContent() {
 
       const res = await fetch("/api/user/profile", {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: formDataToSend,
       })
 

@@ -17,13 +17,11 @@ export async function POST(request: Request) {
 
     const passwordHash = await hashPassword(password)
 
-    // Update password
     await prisma.user.update({
       where: { id: resetToken.user_id },
       data: { password_hash: passwordHash },
     })
 
-    // Consume token
     await prisma.passwordResetToken.delete({
       where: { id: resetToken.id },
     })

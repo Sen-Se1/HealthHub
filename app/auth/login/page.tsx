@@ -47,7 +47,7 @@ export default function LoginPage() {
         return
       }
 
-      localStorage.setItem("authToken", data.token)
+      // Token is now handled via HttpOnly cookie set by the server
       router.push(data.user.role === "patient" ? "/patient/dashboard" : "/doctor/dashboard")
     } catch (err) {
       setError("An error occurred during login")

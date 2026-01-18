@@ -42,7 +42,12 @@ export async function getSessionUser(token: string) {
   const session = await prisma.session.findUnique({
     where: { token },
     include: {
-      user: true,
+      user: {
+        include: {
+          patient: true,
+          doctor: true,
+        },
+      },
     },
   })
 

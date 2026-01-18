@@ -29,13 +29,9 @@ export function DoctorNavbar() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("authToken")
-      if (!token) return
-
+      // Token is now handled via HttpOnly cookie
       try {
-        const res = await fetch("/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch("/api/user/profile")
         if (res.ok) {
           const data = await res.json()
           setUser(data.user)
@@ -59,9 +55,18 @@ export function DoctorNavbar() {
     }
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken")
-    router.push("/auth/login")
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST"
+      })
+    } catch (error) {
+      console.error("Logout error:", error)
+    } finally {
+      localStorage.removeItem("authToken") // Cleanup just in case
+      router.refresh()
+      router.push("/auth/login")
+    }
   }
 
   const navLinks = [

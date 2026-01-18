@@ -27,24 +27,15 @@ export default function DoctorChatContent() {
 
   useEffect(() => {
     const fetchConversations = async () => {
-      const token = localStorage.getItem("authToken")
-      if (!token) {
-        router.push("/auth/login")
-        return
-      }
-
+      // Token is now handled via HttpOnly cookie
       try {
-        const userRes = await fetch("/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const userRes = await fetch("/api/user/profile")
         if (userRes.ok) {
           const userData = await userRes.json()
           setUserId(userData.user.id)
         }
 
-        const res = await fetch("/api/chat/conversations?role=doctor", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch("/api/chat/conversations?role=doctor")
         if (res.ok) {
           const data = await res.json()
           setConversations(data.conversations || [])

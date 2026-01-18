@@ -1,34 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db"
+import { verifyAuth } from "@/lib/middleware"
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get("authorization")?.replace("Bearer ", "")
+    const user = await verifyAuth(request)
 
-    if (!token) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Verify session and get user with profile
-    const session = await prisma.session.findUnique({
-      where: { token },
-      include: {
-        user: {
-          include: {
-            patient: true,
-            doctor: true,
-          },
-        },
-      },
-    })
-
-    if (!session || session.expires_at < new Date()) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 401 })
-    }
-
-    const user = session.user
-
-    // Get role-specific info
     if (user.role === "patient" && user.patient) {
       return NextResponse.json({
         user: { ...user, ...user.patient },
@@ -48,25 +29,14 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = request.headers.get("authorization")?.replace("Bearer ", "")
+    const user = await verifyAuth(request)
 
-    if (!token) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const session = await prisma.session.findUnique({
-      where: { token },
-      include: {
-        user: true,
-      },
-    })
-
-    if (!session || session.expires_at < new Date()) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 401 })
-    }
-
-    const userId = session.user_id
-    const userRole = session.user.role
+    const userId = user.id
+    const userRole = user.role
 
     let body: any = {}
     const contentType = request.headers.get("content-type") || ""

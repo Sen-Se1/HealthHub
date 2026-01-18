@@ -2,7 +2,13 @@ import { prisma } from "@/lib/db"
 
 export async function POST(request: Request) {
   try {
-    const token = request.headers.get("authorization")?.split(" ")[1]
+    let token = request.headers.get("authorization")?.split(" ")[1]
+
+    if (!token) {
+      // Check cookies for token
+      const cookieHeader = request.headers.get("cookie")
+      token = cookieHeader?.split(";").find(c => c.trim().startsWith("auth_token="))?.split("=")[1]
+    }
 
     if (token) {
       try {
@@ -10,7 +16,6 @@ export async function POST(request: Request) {
           where: { token },
         })
       } catch (error) {
-        // Session might not exist
       }
     }
 

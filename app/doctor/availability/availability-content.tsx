@@ -36,16 +36,9 @@ export default function AvailabilityContent() {
 
   useEffect(() => {
     const fetchAvailability = async () => {
-      const token = localStorage.getItem("authToken")
-      if (!token) {
-        router.push("/auth/login")
-        return
-      }
-
+      // Token is now handled via HttpOnly cookie
       try {
-        const res = await fetch("/api/doctor/availability", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch("/api/doctor/availability")
 
         if (res.ok) {
           const data = await res.json()
@@ -66,15 +59,12 @@ export default function AvailabilityContent() {
   }
 
   const handleAddAvailability = async () => {
-    const token = localStorage.getItem("authToken")
     setAdding(true)
-
     try {
       const res = await fetch("/api/doctor/availability", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           dayOfWeek: formData.dayOfWeek,

@@ -26,16 +26,9 @@ export default function DoctorDashboardContent() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("authToken")
-      if (!token) {
-        router.push("/auth/login")
-        return
-      }
-
+      // Token is now handled via HttpOnly cookie
       try {
-        const res = await fetch("/api/appointments/list", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch("/api/appointments/list")
         if (res.ok) {
           const data = await res.json()
           setAppointments(data.appointments || [])
@@ -54,13 +47,11 @@ export default function DoctorDashboardContent() {
   }, [router])
 
   const handleUpdateStatus = async (appointmentId: number, status: string) => {
-    const token = localStorage.getItem("authToken")
     try {
       const res = await fetch("/api/appointments/update-status", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ appointmentId, status }),
       })
