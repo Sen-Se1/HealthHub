@@ -93,7 +93,7 @@ export default function CareersPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <PublicNavbar activePage="Careers" />
+      <PublicNavbar />
 
       {/* Hero Section */}
       <section className="pt-32 pb-24 relative overflow-hidden">
@@ -278,7 +278,7 @@ export default function CareersPage() {
                     exit={{ opacity: 0, scale: 0.95 }}
                   >
                     <Card 
-                      className={`border-none shadow-sm hover:shadow-md transition-all rounded-[2rem] overflow-hidden ${openJobId === job.id ? 'ring-2 ring-primary/20 bg-background scale-[1.01]' : 'bg-background hover:bg-background/80'}`}
+                      className={`border-none shadow-sm hover:shadow-md transition-all rounded-4xl overflow-hidden ${openJobId === job.id ? 'ring-2 ring-primary/20 bg-background scale-[1.01]' : 'bg-background hover:bg-background/80'}`}
                     >
                       <button
                         onClick={() => setOpenJobId(openJobId === job.id ? null : job.id)}
@@ -380,7 +380,7 @@ export default function CareersPage() {
                 { icon: GraduationCap, title: "Learning Budget" },
                 { icon: Zap, title: "Modern Stack" }
               ].map((benefit, i) => (
-                <div key={i} className="flex flex-col items-center gap-4 text-center p-6 rounded-[2rem] bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors">
+                <div key={i} className="flex flex-col items-center gap-4 text-center p-6 rounded-4xl bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors">
                   <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <benefit.icon className="h-6 w-6 text-primary" />
                   </div>

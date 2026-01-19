@@ -13,6 +13,8 @@ import {
 import { motion } from "framer-motion"
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
+import { PublicNavbar } from "@/components/public-navbar"
+import { PublicFooter } from "@/components/public-footer"
 
 export default function Home() {
   const [search, setSearch] = useState({ specialty: "", location: "", date: "" })
@@ -40,50 +42,7 @@ export default function Home() {
         <div className="absolute bottom-[5%] left-[-10%] w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[140px]" />
       </div>
 
-      {/* Header */}
-      <motion.header 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b border-border/40 supports-backdrop-filter:bg-background/60"
-      >
-        <div className="container mx-auto px-4 flex h-20 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="h-11 w-11 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-all duration-300">
-              <Stethoscope className="text-white h-6 w-6" aria-hidden="true" />
-            </div>
-            <span className="font-black text-2xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          
-          <nav className="hidden md:flex items-center gap-10">
-            {[
-              { name: "Find Doctors", href: "#doctors" },
-              { name: "Specialties", href: "#specialties" },
-              { name: "How it Works", href: "#how-it-works" },
-              { name: "Join Us", href: "#join-as-doctor" }
-            ].map((item) => (
-              <Link 
-                key={item.name} 
-                href={item.href}
-                className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors tracking-wide"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-5">
-            <ModeToggle />
-            <Link href="/auth/login" className="hidden sm:block">
-              <Button variant="ghost" className="font-bold text-foreground hover:text-primary hover:bg-primary/5 px-6">Log in</Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button size="lg" className="rounded-full font-black px-8 shadow-xl shadow-primary/25 hover:shadow-primary/40 transition-all active:scale-95 bg-primary">
-                Book Now
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </motion.header>
+      <PublicNavbar />
 
       {/* Hero Section */}
       <section className="relative pt-16 lg:pt-32 pb-24 overflow-hidden">
@@ -521,67 +480,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Advanced Footer */}
-      <footer className="bg-card pt-32 pb-16 border-t border-border/50 relative overflow-hidden">
-        <div className="container mx-auto px-4 flex flex-col items-center">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-16 w-full mb-32">
-            <div className="col-span-2 lg:col-span-2">
-              <Link href="/" className="flex items-center gap-3 mb-8 group">
-                <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Stethoscope className="text-white h-7 w-7" />
-                </div>
-                <span className="font-black text-3xl tracking-tighter">HealthHub</span>
-              </Link>
-              <p className="text-muted-foreground text-lg mb-8 max-w-sm leading-relaxed">
-                Empowering patients and doctors with advanced digital solutions for a healthier tomorrow.
-              </p>
-              <div className="flex gap-4">
-                {[
-                  { Icon: Twitter, label: "Twitter" },
-                  { Icon: Facebook, label: "Facebook" },
-                  { Icon: Linkedin, label: "LinkedIn" }
-                ].map(({ Icon, label }) => (
-                  <div key={label} className="h-14 w-14 rounded-full bg-muted flex items-center justify-center cursor-pointer hover:bg-primary hover:text-white transition-all shadow-sm" aria-label={`Follow us on ${label}`}>
-                    <span className="sr-only">{label}</span>
-                    <Icon className="h-6 w-6" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {[
-              { title: "Platform", links: [{n: "Find Doctors", h: "#doctors"}, {n: "Specialties", h: "#specialties"}, {n: "How it Works", h: "#how-it-works"}, {n: "Join as Doctor", h: "#join-as-doctor"}] },
-              { title: "Company", links: [{n: "About Us", h: "/about-us"}, {n: "Contact", h: "/contact-us"}, {n: "Careers", h: "/careers"}, {n: "FAQ", h: "/faq"}] },
-              { title: "Legal", links: [{n: "Privacy Policy", h: "/privacy-policy"}, {n: "Terms of Service", h: "/terms-of-service"}, {n: "Cookie Policy", h: "/cookies"}, {n: "Legal Notes", h: "/legal-notes"}] }
-            ].map((col, idx) => (
-              <div key={idx}>
-                <h5 className="font-black text-xl mb-8 tracking-tight">{col.title}</h5>
-                <ul className="space-y-5">
-                  {col.links.map(l => (
-                    <li key={l.n}>
-                      <Link href={l.h} className="text-muted-foreground hover:text-primary font-medium transition-colors">{l.n}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="w-full h-px bg-border/50 mb-16" />
-          
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8 w-full text-muted-foreground font-medium">
-            <p>&copy; {new Date().getFullYear()} HealthHub. All rights reserved.</p>
-            <div className="flex gap-10">
-              <Link href="#" className="hover:text-primary transition-colors">Status</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Trust</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Security</Link>
-            </div>
-            <p className="flex items-center gap-2">
-              Built with <Heart className="h-4 w-4 text-red-500 fill-current" /> by SenSe1
-            </p>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </main>
   )
 }

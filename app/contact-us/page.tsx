@@ -69,7 +69,7 @@ export default function ContactUsPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <PublicNavbar activePage="Contact" />
+      <PublicNavbar />
 
       <main className="flex-1 pt-32 pb-24">
         {/* Hero Section */}
@@ -333,29 +333,6 @@ export default function ContactUsPage() {
         </section>
       </main>
 
-      {/* Simplified Footer */}
-      <footer className="bg-muted/30 border-t border-border/40 py-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 max-w-6xl mx-auto">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <Stethoscope className="text-white h-4 w-4" />
-              </div>
-              <span className="font-black text-xl tracking-tighter">HealthHub</span>
-            </div>
-            
-            <div className="flex flex-wrap justify-center gap-8 text-sm font-bold text-muted-foreground uppercase tracking-wider">
-              <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
-              <Link href="/" className="hover:text-primary transition-colors">Back to Home</Link>
-            </div>
-
-            <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">
-              &copy; {new Date().getFullYear()} HealthHub Inc. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <PublicFooter />    </div>
   )
 }

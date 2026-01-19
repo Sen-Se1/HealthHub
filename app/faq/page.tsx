@@ -86,7 +86,7 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <PublicNavbar activePage="FAQ" />
+      <PublicNavbar />
 
       {/* Hero Header */}
       <section className="pt-32 pb-20 relative overflow-hidden">

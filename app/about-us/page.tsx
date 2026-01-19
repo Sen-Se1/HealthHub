@@ -16,7 +16,7 @@ import { PublicFooter } from "@/components/public-footer"
 export default function AboutUsPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <PublicNavbar activePage="About" />
+      <PublicNavbar />
 
       {/* Hero Header */}
       <section className="pt-32 pb-20 relative overflow-hidden">

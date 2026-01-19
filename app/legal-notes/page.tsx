@@ -8,6 +8,8 @@ import {
   FileText, Lock, AlertTriangle,
   ArrowLeft, ExternalLink, Copyright
 } from "lucide-react"
+import { PublicNavbar } from "@/components/public-navbar"
+import { PublicFooter } from "@/components/public-footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ModeToggle } from "@/components/ui/mode-toggle"
@@ -25,34 +27,7 @@ const SECTIONS = [
 export default function LegalNotesPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Sticky Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white h-5 w-5" />
-            </div>
-            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          
-          <div className="hidden md:flex items-center gap-8">
-            <span className="text-sm font-bold text-foreground">Legal Notes</span>
-            <div className="h-4 w-px bg-border" />
-            <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Sign In</Link>
-            <Link href="/auth/register">
-              <Button className="h-9 rounded-full px-5 font-bold shadow-lg shadow-primary/20">Get Started</Button>
-            </Link>
-            <ModeToggle />
-          </div>
-
-          <div className="md:hidden flex items-center gap-4">
-            <ModeToggle />
-            <Link href="/auth/login">
-              <Button variant="ghost" size="sm" className="font-bold">Sign In</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero Header */}
       <section className="pt-32 pb-16 relative overflow-hidden">
@@ -238,7 +213,7 @@ export default function LegalNotesPage() {
 
               <section id="footer-cta" className="pt-10 border-t border-border/40">
                 <Card className="rounded-3xl border-none bg-primary p-8 text-center text-white relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1),transparent)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent)]" />
                   <div className="relative z-10">
                     <p className="font-black text-xs uppercase tracking-widest mb-4">Official Platform Documents</p>
                     <div className="flex flex-wrap justify-center gap-4">
@@ -261,37 +236,7 @@ export default function LegalNotesPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-muted/50 border-t border-border/40 py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:row items-center justify-between gap-12">
-            <div>
-              <Link href="/" className="flex items-center gap-2 mb-6 justify-center md:justify-start">
-                <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-                  <Stethoscope className="text-white h-6 w-6" />
-                </div>
-                <span className="font-black text-2xl tracking-tighter">HealthHub</span>
-              </Link>
-              <p className="text-muted-foreground font-medium leading-relaxed text-center md:text-left max-w-sm">
-                Empowering patients and doctors with seamless digital healthcare experiences. 
-                Full transparency and legal compliance in every interaction.
-              </p>
-            </div>
-            <div className="flex flex-wrap justify-center gap-8 text-sm font-bold text-muted-foreground">
-              <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
-              <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms</Link>
-              <Link href="/cookies" className="hover:text-primary transition-colors">Cookies</Link>
-              <Link href="/legal-notes" className="text-primary">Legal Notes</Link>
-              <Link href="/contact-us" className="hover:text-primary transition-colors">Contact</Link>
-              <Link href="/faq" className="hover:text-primary transition-colors">FAQ</Link>
-            </div>
-          </div>
-          <div className="h-px bg-border/40 my-12" />
-          <div className="text-center text-muted-foreground font-medium text-xs">
-            <p>© 2026 HealthHub Digital Solutions Ltd. All rights reserved. <br className="md:hidden" /> San Francisco, CA. Registered in USA.</p>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   )
 }

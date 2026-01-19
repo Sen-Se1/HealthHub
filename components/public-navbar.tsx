@@ -1,60 +1,107 @@
 "use client"
 
 import Link from "next/link"
-import { Stethoscope, Menu, X } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { Stethoscope, Menu, X, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/mode-toggle"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 
-interface PublicNavbarProps {
-  activePage?: string
-}
-
-export function PublicNavbar({ activePage }: PublicNavbarProps) {
+export function PublicNavbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
 
   const links = [
-    { name: "About", href: "/about-us" },
-    { name: "FAQ", href: "/faq" },
+    { name: "Home", href: "/" },
+    { name: "About Us", href: "/about-us" },
     { name: "Careers", href: "/careers" },
-    { name: "Contact", href: "/contact-us" },
+    { name: "FAQ", href: "/faq" },
+    { name: "Contact Us", href: "/contact-us" },
   ]
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
   return (
-    <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-            <Stethoscope className="text-white h-5 w-5" />
+    <nav 
+      className={cn(
+        "fixed top-0 w-full z-50 transition-all duration-300",
+        scrolled 
+          ? "bg-background/80 backdrop-blur-lg border-b border-border/40 py-2 shadow-sm" 
+          : "bg-transparent py-4"
+      )}
+    >
+      <div className="container mx-auto px-4 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 group relative z-50">
+          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-all duration-300">
+            <Stethoscope className="text-white h-6 w-6" />
           </div>
-          <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
+          <div className="flex flex-col -gap-1">
+            <span className="font-bold text-xl tracking-tight text-foreground leading-none">HealthHub</span>
+            <span className="text-[10px] text-primary font-semibold tracking-widest uppercase">Healthcare</span>
+          </div>
         </Link>
         
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-1 bg-muted/50 dark:bg-muted/20 p-1 rounded-full border border-border/40">
           {links.map((link) => (
             <Link 
               key={link.href} 
               href={link.href} 
-              className={`text-sm font-bold transition-colors ${activePage === link.name ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+              className={cn(
+                "relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-full",
+                pathname === link.href 
+                  ? "text-primary-foreground" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+              )}
             >
+              {pathname === link.href && (
+                <motion.div 
+                  layoutId="nav-active"
+                  className="absolute inset-0 bg-primary rounded-full -z-10 shadow-md shadow-primary/20"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
               {link.name}
             </Link>
           ))}
-          <div className="h-4 w-px bg-border" />
-          <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Sign In</Link>
-          <Link href="/auth/register">
-            <Button className="h-9 rounded-full px-5 font-bold shadow-lg shadow-primary/20">Get Started</Button>
-          </Link>
-          <ModeToggle />
         </div>
 
-        {/* Mobile Actions */}
-        <div className="md:hidden flex items-center gap-4">
+        {/* Actions */}
+        <div className="hidden lg:flex items-center gap-3">
           <ModeToggle />
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <div className="h-4 w-px bg-border/60 mx-1" />
+          <Link href="/auth/login">
+            <Button variant="ghost" className="text-sm font-semibold hover:bg-primary/5 hover:text-primary transition-colors">
+              Login
+            </Button>
+          </Link>
+          <Link href="/auth/register">
+            <Button className="rounded-full px-6 font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all hover:scale-105 active:scale-95">
+              Get Started
+            </Button>
+          </Link>
+        </div>
+
+        {/* Mobile menu button */}
+        <div className="lg:hidden flex items-center gap-3 relative z-50">
+          <ModeToggle />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setIsOpen(!isOpen)}
+            className="rounded-full bg-muted/50 hover:bg-muted"
+          >
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
       </div>
@@ -63,27 +110,47 @@ export function PublicNavbar({ activePage }: PublicNavbarProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background border-b border-border/40 overflow-hidden"
+            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -20 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="fixed inset-0 z-40 lg:hidden bg-background pt-24 px-6"
           >
-            <div className="container mx-auto px-4 py-8 flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-4">Navigation</span>
               {links.map((link) => (
                 <Link 
                   key={link.href} 
                   href={link.href} 
                   onClick={() => setIsOpen(false)}
-                  className={`text-lg font-black tracking-tight ${activePage === link.name ? 'text-primary' : 'text-foreground'}`}
+                  className={cn(
+                    "flex items-center justify-between p-4 rounded-2xl transition-all",
+                    pathname === link.href 
+                      ? "bg-primary/10 text-primary font-bold" 
+                      : "text-foreground hover:bg-muted"
+                  )}
                 >
-                  {link.name}
+                  <span className="text-lg tracking-tight">{link.name}</span>
+                  <ChevronRight className={cn("h-5 w-5 opacity-50", pathname === link.href && "opacity-100")} />
                 </Link>
               ))}
-              <div className="h-px bg-border/50" />
-              <Link href="/auth/login" onClick={() => setIsOpen(false)} className="text-lg font-black tracking-tight text-foreground">Sign In</Link>
-              <Link href="/auth/register" onClick={() => setIsOpen(false)}>
-                <Button className="w-full h-12 rounded-2xl font-black text-lg shadow-lg shadow-primary/20">Get Started</Button>
-              </Link>
+              
+              <div className="mt-8 pt-8 border-t border-border/50 flex flex-col gap-4">
+                <Link href="/auth/login" onClick={() => setIsOpen(false)}>
+                  <Button variant="outline" className="w-full h-14 rounded-2xl text-lg font-semibold border-2">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/auth/register" onClick={() => setIsOpen(false)}>
+                  <Button className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            
+            <div className="absolute bottom-10 left-6 right-6 text-center">
+              <p className="text-sm text-muted-foreground">© 2026 HealthHub Platform</p>
             </div>
           </motion.div>
         )}
