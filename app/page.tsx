@@ -200,10 +200,10 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: Stethoscope, title: "Expert Care", desc: "Access to a global network of world-class, board-certified specialists.", color: "bg-blue-500" },
-              { icon: CalendarCheck, title: "Instant Booking", desc: "Skip the waiting room. Book and confirm your visits in under 60 seconds.", color: "bg-green-500" },
-              { icon: MessageCircle, title: "Secure Consult", desc: "Encrypted direct messaging for private and safe health discussions.", color: "bg-purple-500" },
-              { icon: Shield, title: "HIPAA Compliant", desc: "Your medical data is protected by industry-leading security standards.", color: "bg-orange-500" }
+              { icon: Stethoscope, title: "Expert Care", desc: "Access to a global network of world-class, board-certified specialists.", bgColor: "bg-blue-500/10" },
+              { icon: CalendarCheck, title: "Instant Booking", desc: "Skip the waiting room. Book and confirm your visits in under 60 seconds.", bgColor: "bg-green-500/10" },
+              { icon: MessageCircle, title: "Secure Consult", desc: "Encrypted direct messaging for private and safe health discussions.", bgColor: "bg-purple-500/10" },
+              { icon: Shield, title: "HIPAA Compliant", desc: "Your medical data is protected by industry-leading security standards.", bgColor: "bg-orange-500/10" }
             ].map((feature, idx) => (
               <motion.div
                 key={idx}
@@ -216,7 +216,7 @@ export default function Home() {
               >
                 <Card className="h-full border border-border/50 bg-card hover:border-primary/50 transition-all duration-300 shadow-md hover:shadow-medical-hover rounded-4xl overflow-hidden">
                   <CardContent className="p-10">
-                    <div className={`h-16 w-16 rounded-2xl ${feature.color}/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
+                    <div className={`h-16 w-16 rounded-2xl ${feature.bgColor} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
                       <feature.icon className={`h-8 w-8 text-foreground group-hover:text-primary transition-colors`} />
                     </div>
                     <h3 className="font-black text-2xl mb-4 tracking-tight">{feature.title}</h3>
@@ -332,8 +332,6 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-16 relative">
-            {/* Step Line */}
-            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-1 bg-linear-to-r from-primary/10 via-primary to-primary/10 rounded-full" />
             
             {[
               { icon: UserPlus, title: "Create Profile", desc: "Sign up and build your secure medical profile in minutes." },

@@ -26,14 +26,17 @@ export function AuthNavbar() {
   const contextLink = getContextualLink()
 
   return (
-    <nav className="sticky top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <nav className="sticky top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40 py-4">
+      <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Left: Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform duration-300">
-            <Stethoscope className="text-white h-5 w-5" />
+        <Link href="/" className="flex items-center gap-2 group relative z-50">
+          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-all duration-300">
+            <Stethoscope className="text-white h-6 w-6" />
           </div>
-          <span className="font-bold text-xl tracking-tight text-foreground">HealthHub</span>
+          <div className="flex flex-col -gap-1">
+            <span className="font-bold text-xl tracking-tight text-foreground leading-none">HealthHub</span>
+            <span className="text-[10px] text-primary font-semibold tracking-widest uppercase">Healthcare</span>
+          </div>
         </Link>
 
         {/* Right: Actions */}

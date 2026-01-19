@@ -22,7 +22,7 @@ const footerSections = [
     links: [
       { name: "Privacy Policy", href: "/privacy-policy" },
       { name: "Terms of Service", href: "/terms-of-service" },
-      { name: "Cookies Policy", href: "/cookies-policy" },
+      { name: "Cookies Policy", href: "/cookies" },
       { name: "Legal Notes", href: "/legal-notes" },
     ]
   },
@@ -120,7 +120,7 @@ export function PublicFooter() {
             <div className="flex items-center gap-6">
               <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
               <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms</Link>
-              <Link href="/cookies-policy" className="hover:text-primary transition-colors">Cookies</Link>
+              <Link href="/cookies" className="hover:text-primary transition-colors">Cookies</Link>
             </div>
           </div>
         </div>
