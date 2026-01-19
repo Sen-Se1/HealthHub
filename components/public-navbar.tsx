@@ -81,12 +81,12 @@ export function PublicNavbar() {
           <ModeToggle />
           <div className="h-4 w-px bg-border/60 mx-1" />
           <Link href="/auth/login">
-            <Button variant="ghost" className="text-sm font-semibold hover:bg-primary/5 hover:text-primary transition-colors">
+            <Button variant="ghost" className="text-sm font-semibold hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">
               Login
             </Button>
           </Link>
           <Link href="/auth/register">
-            <Button className="rounded-full px-6 font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all hover:scale-105 active:scale-95">
+            <Button className="rounded-full px-6 font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all hover:scale-105 active:scale-95 cursor-pointer">
               Get Started
             </Button>
           </Link>
@@ -99,7 +99,7 @@ export function PublicNavbar() {
             variant="ghost" 
             size="icon" 
             onClick={() => setIsOpen(!isOpen)}
-            className="rounded-full bg-muted/50 hover:bg-muted"
+            className="rounded-full bg-muted/50 hover:bg-muted cursor-pointer"
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
@@ -137,12 +137,12 @@ export function PublicNavbar() {
               
               <div className="mt-8 pt-8 border-t border-border/50 flex flex-col gap-4">
                 <Link href="/auth/login" onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" className="w-full h-14 rounded-2xl text-lg font-semibold border-2">
+                  <Button variant="outline" className="w-full h-14 rounded-2xl text-lg font-semibold border-2 cursor-pointer">
                     Login
                   </Button>
                 </Link>
                 <Link href="/auth/register" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20">
+                  <Button className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 cursor-pointer">
                     Get Started
                   </Button>
                 </Link>

@@ -54,33 +54,30 @@ export default function TermsOfServicePage() {
       <main className="pt-32 pb-24">
         {/* Hero Section */}
         <section className="container mx-auto px-4 mb-20">
-          <div className="max-w-4xl mx-auto text-center md:text-left flex flex-col md:row items-center gap-12 bg-secondary/5 p-12 rounded-[2.5rem] border border-secondary/10 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl -mr-32 -mt-32" />
+          <div className="max-w-4xl mx-auto text-center md:text-left flex flex-col md:flex-row items-center gap-12 bg-primary/5 p-12 rounded-[2.5rem] border border-primary/10 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
             
             <div className="flex-1 z-10">
-              <Link href="/" className="inline-flex items-center gap-2 text-primary font-bold text-sm mb-6 hover:gap-3 transition-all">
-                <ArrowLeft className="h-4 w-4" /> Back to Home
-              </Link>
               <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter">Terms of Service</h1>
               <p className="text-xl text-muted-foreground font-medium mb-8 leading-relaxed">
                 Please read these terms carefully before using our platform. By using HealthHub, youAgree to these terms.
               </p>
-              <div className="flex items-center gap-4 text-sm font-bold text-secondary">
+              <div className="flex items-center gap-4 text-sm font-bold text-primary">
                 <span className="flex items-center gap-2"><Clock className="h-4 w-4" /> Last Updated: Oct 2023</span>
-                <span className="px-3 py-1 bg-secondary/10 rounded-full text-secondary-foreground text-xs">v1.4</span>
+                <span className="px-3 py-1 bg-primary/10 rounded-full">v1.4</span>
               </div>
             </div>
 
             <div className="w-full md:w-72 h-72 relative z-10 shrink-0">
-              <div className="absolute inset-0 bg-linear-to-tr from-secondary/20 to-transparent rounded-3xl" />
+              <div className="absolute inset-0 bg-linear-to-tr from-primary/20 to-transparent rounded-3xl" />
               <Image 
-                src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1470&auto=format&fit=crop" 
+                src="/terms-of-service-hero.png" 
                 alt="Terms and Legal Illustration" 
                 fill
                 className="object-cover rounded-3xl border border-white/10 shadow-2xl"
               />
               <div className="absolute -bottom-4 -left-4 glass p-4 rounded-xl border border-white/20 shadow-xl">
-                <FileText className="h-8 w-8 text-secondary" />
+                <FileText className="h-8 w-8 text-primary" />
               </div>
             </div>
           </div>
@@ -119,7 +116,7 @@ export default function TermsOfServicePage() {
                   className="scroll-mt-24 group"
                 >
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="h-10 w-10 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                       <section.icon className="h-5 w-5" />
                     </div>
                     <h2 className="text-2xl font-black tracking-tight">{section.title}</h2>
@@ -135,7 +132,7 @@ export default function TermsOfServicePage() {
                     <ul className="space-y-4 mt-6">
                       {section.items.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-3 bg-muted/30 p-4 rounded-2xl border border-border/50">
-                          <CheckCircle2 className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
+                          <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                           <span className="text-foreground/90 font-bold text-base leading-snug">{item}</span>
                         </li>
                       ))}

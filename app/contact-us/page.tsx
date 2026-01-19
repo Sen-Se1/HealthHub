@@ -94,8 +94,8 @@ export default function ContactUsPage() {
             <div className="w-full md:w-[450px] aspect-square relative z-10 shrink-0">
               <div className="absolute inset-0 bg-linear-to-tr from-primary/20 to-transparent rounded-4xl" />
               <Image 
-                src="https://images.unsplash.com/photo-1559839734-2b71f1536783?q=80&w=1200&auto=format&fit=crop" 
-                alt="Healthcare Support Specialist" 
+                src="/contact-us-hero.png" 
+                alt="Healthcare Support Team" 
                 fill
                 className="object-cover rounded-4xl border border-white/10 shadow-3xl"
               />

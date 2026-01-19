@@ -81,12 +81,12 @@ export default function LoginPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
+              transition={{ duration: 0.6 }}
             >
               <div className="relative mb-10 rounded-3xl overflow-hidden shadow-2xl shadow-primary/10 border border-white/20 aspect-video glass-card">
                 <Image 
-                  src="/clinic-illustration.png" 
-                  alt="HealthHub Clinic Illustration" 
+                  src="/login-hero.png" 
+                  alt="Secure Login Illustration" 
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"
                   priority
@@ -127,6 +127,7 @@ export default function LoginPage() {
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="w-full max-w-md space-y-8"
           >
             <div className="text-center md:text-left space-y-2">

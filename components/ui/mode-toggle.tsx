@@ -1,40 +1,43 @@
-"use client"
-
 import * as React from "react"
-import { Moon, Sun } from "lucide-react"
+import { Moon, Sun, Laptop } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 
 export function ModeToggle() {
-  const { setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const cycleMode = () => {
+    if (theme === 'system') setTheme('light')
+    else if (theme === 'light') setTheme('dark')
+    else setTheme('system')
+  }
+
+  if (!mounted) {
+    return (
+      <Button variant="outline" size="icon" className="glass bg-transparent border-primary/20">
+        <span className="sr-only">Toggle theme</span>
+      </Button>
+    )
+  }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="glass bg-transparent border-primary/20 hover:bg-primary/10">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="glass-card bg-background/95 backdrop-blur-xl border-border/50">
-        <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer focus:bg-primary/10 focus:text-primary hover:bg-primary/10 hover:text-primary font-bold">
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer focus:bg-primary/10 focus:text-primary hover:bg-primary/10 hover:text-primary font-bold">
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer focus:bg-primary/10 focus:text-primary hover:bg-primary/10 hover:text-primary font-bold">
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button 
+      variant="outline" 
+      size="icon" 
+      className="glass bg-transparent border-primary/20 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white relative transition-colors duration-300 cursor-pointer"
+      onClick={cycleMode}
+    >
+      <Sun className={`h-[1.2rem] w-[1.2rem] transition-all ${theme === 'light' ? 'rotate-0 scale-100' : '-rotate-90 scale-0 absolute'}`} />
+      <Moon className={`h-[1.2rem] w-[1.2rem] transition-all ${theme === 'dark' ? 'rotate-0 scale-100' : 'rotate-90 scale-0 absolute'}`} />
+      <Laptop className={`h-[1.2rem] w-[1.2rem] transition-all ${theme === 'system' ? 'rotate-0 scale-100' : 'rotate-180 scale-0 absolute'}`} />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
   )
 }

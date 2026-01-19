@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   Search, ChevronDown, 
@@ -233,12 +234,16 @@ export default function FAQPage() {
                 Can't find the answer you're looking for? Please reach out to our friendly support team for personal assistance.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="h-14 px-8 rounded-full font-black text-lg bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 w-full sm:w-auto">
-                    Contact Support <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline" className="h-14 px-8 rounded-full font-black text-lg border-2 border-primary/20 hover:bg-primary/5 w-full sm:w-auto">
-                    Sign In to Account
-                </Button>
+                <Link href="/contact-us" className="w-full sm:w-auto">
+                  <Button size="lg" className="cursor-pointer h-14 px-8 rounded-full font-black text-lg bg-primary hover:bg-primary/80 shadow-xl shadow-primary/20 w-full transition-all duration-300">
+                      Contact Support <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/auth/login" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="cursor-pointer h-14 px-8 rounded-full font-black text-lg border-2 border-primary/20 text-primary hover:bg-primary hover:text-white w-full transition-all duration-300">
+                      Sign In to Account
+                  </Button>
+                </Link>
               </div>
             </div>
           </Card>

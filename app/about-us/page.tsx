@@ -88,8 +88,8 @@ export default function AboutUsPage() {
               className="relative aspect-square md:aspect-auto md:h-[600px] rounded-[3rem] overflow-hidden shadow-2xl"
             >
               <Image 
-                src="https://images.unsplash.com/photo-1576091160550-2173dad99901?q=80&w=2070&auto=format&fit=crop"
-                alt="Modern Healthcare"
+                src="/about-us-hero.png"
+                alt="Modern Healthcare Team"
                 fill
                 className="object-cover"
               />
@@ -210,12 +210,12 @@ export default function AboutUsPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
                   <Link href="/auth/register">
-                    <Button size="lg" className="h-16 px-10 rounded-full font-black text-xl bg-white text-primary hover:bg-white/90 shadow-2xl w-full sm:w-auto">
+                    <Button size="lg" className="h-16 px-10 rounded-full font-black text-xl bg-white text-primary hover:bg-white/90 shadow-2xl w-full sm:w-auto cursor-pointer transition-all duration-300">
                       Get Started Now <ArrowRight className="ml-2 h-6 w-6" />
                     </Button>
                   </Link>
                   <Link href="/auth/register">
-                    <Button size="lg" variant="outline" className="h-16 px-10 rounded-full font-black text-xl border-2 border-white/40 text-white hover:bg-white/10 w-full sm:w-auto">
+                    <Button size="lg" variant="outline" className="h-16 px-10 rounded-full font-black text-xl border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary w-full sm:w-auto cursor-pointer transition-all duration-300">
                       Join as Doctor
                     </Button>
                   </Link>

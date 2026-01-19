@@ -131,12 +131,12 @@ export default function CareersPage() {
               className="flex flex-wrap justify-center gap-4"
             >
               <a href="#open-positions">
-                <Button size="lg" className="h-14 px-10 rounded-full font-black text-lg bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20">
+                <Button size="lg" className="h-14 px-10 rounded-full font-black text-lg bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 cursor-pointer transition-all duration-300">
                   View Open Positions
                 </Button>
               </a>
               <Link href="/about-us">
-                <Button size="lg" variant="outline" className="h-14 px-10 rounded-full font-black text-lg border-2">
+                <Button size="lg" variant="outline" className="h-14 px-10 rounded-full font-black text-lg border-2 border-primary/20 text-primary hover:bg-primary hover:text-white cursor-pointer transition-all duration-300 bg-transparent">
                   Our Culture
                 </Button>
               </Link>
@@ -430,7 +430,7 @@ export default function CareersPage() {
                   We're always looking for talented individuals who share our passion for healthcare technology. Send us your CV anyway!
                 </p>
                 <Link href="mailto:careers@healthhub.com">
-                  <Button size="lg" className="h-16 px-12 rounded-full font-black text-xl bg-white text-primary hover:bg-white/90 shadow-2xl">
+                  <Button size="lg" className="h-16 px-12 rounded-full font-black text-xl bg-white text-primary hover:bg-white/90 shadow-2xl cursor-pointer transition-all duration-300">
                     Submit General Application <ArrowRight className="ml-2 h-6 w-6" />
                   </Button>
                 </Link>

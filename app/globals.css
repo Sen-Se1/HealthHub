@@ -12,20 +12,20 @@
   --card-foreground: oklch(0.13 0.01 260);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.13 0.01 260);
-  /* Medical Blue #1E88E5 -> oklch(0.59 0.18 250) */
+  /* Medical Blue #1E88E5 */
   --primary: oklch(0.59 0.18 250);
   --primary-foreground: oklch(0.98 0 0);
 
-  /* Soft Green #43A047 -> oklch(0.63 0.18 145) */
-  --secondary: oklch(0.98 0.02 145);
-  --secondary-foreground: oklch(0.2 0.1 145);
+  /* Soft Green #43A047 */
+  --secondary: oklch(0.63 0.18 145);
+  --secondary-foreground: oklch(0.98 0 0);
 
   --muted: oklch(0.95 0.01 260);
   --muted-foreground: oklch(0.45 0 0);
 
-  /* Accent: Light Cyan / Soft Blue */
-  --accent: oklch(0.63 0.18 145);
-  --accent-foreground: oklch(0.98 0 0);
+  /* Accent: Light Cyan (#E3F2FD) */
+  --accent: oklch(0.94 0.03 245);
+  --accent-foreground: oklch(0.59 0.18 250);
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.9 0.01 260);
@@ -56,18 +56,20 @@
   --card-foreground: oklch(0.98 0 0);
   --popover: oklch(0.18 0.02 260);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.65 0.18 250);
-  /* Vibrant medical blue for dark mode */
-  --primary-foreground: oklch(1 0 0);
+  /* Medical Blue #1E88E5 for Dark Mode - slightly adjusted for contrast if needed, but keeping consistent */
+  --primary: oklch(0.59 0.18 250); 
+  --primary-foreground: oklch(0.98 0 0);
 
-  --secondary: oklch(0.25 0.05 145);
-  --secondary-foreground: oklch(0.95 0 0);
+  /* Soft Green #43A047 */
+  --secondary: oklch(0.63 0.18 145);
+  --secondary-foreground: oklch(0.98 0 0);
 
   --muted: oklch(0.22 0.01 260);
   --muted-foreground: oklch(0.65 0 0);
 
-  --accent: oklch(0.65 0.15 145);
-  --accent-foreground: oklch(0.13 0.01 260);
+  /* Accent: Light Cyan (#E3F2FD) - Darker shade for Dark Mode background */
+  --accent: oklch(0.25 0.05 250);
+  --accent-foreground: oklch(0.94 0.03 245);
   --destructive: oklch(0.45 0.18 25);
   --destructive-foreground: oklch(0.95 0 0);
   --border: oklch(0.25 0.01 260);

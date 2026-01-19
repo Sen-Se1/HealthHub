@@ -467,7 +467,7 @@ export default function Home() {
             <div className="order-1 lg:order-2 relative">
               <div className="absolute -inset-10 bg-primary/5 rounded-full blur-[80px] -z-10" />
               <Image 
-                src="/clinic-illustration.png" 
+                src="/login-hero.png" 
                 alt="Our Facility" 
                 width={700} 
                 height={500} 

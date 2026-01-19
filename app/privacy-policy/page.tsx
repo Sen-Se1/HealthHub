@@ -52,9 +52,6 @@ export default function PrivacyPolicyPage() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
             
             <div className="flex-1 z-10">
-              <Link href="/" className="inline-flex items-center gap-2 text-primary font-bold text-sm mb-6 hover:gap-3 transition-all">
-                <ArrowLeft className="h-4 w-4" /> Back to Home
-              </Link>
               <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter">Privacy Policy</h1>
               <p className="text-xl text-muted-foreground font-medium mb-8 leading-relaxed">
                 Your privacy is important to us. This policy explains how we collect, use, and protect your personal and medical data while using the HealthHub platform.
@@ -68,7 +65,7 @@ export default function PrivacyPolicyPage() {
             <div className="w-full md:w-72 h-72 relative z-10 shrink-0">
               <div className="absolute inset-0 bg-linear-to-tr from-primary/20 to-transparent rounded-3xl" />
               <Image 
-                src="https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1470&auto=format&fit=crop" 
+                src="/privacy-policy-hero.png" 
                 alt="Security and Privacy Illustration" 
                 fill
                 className="object-cover rounded-3xl border border-white/10 shadow-2xl"

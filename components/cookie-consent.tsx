@@ -46,7 +46,7 @@ export function CookieConsent() {
                 </div>
                 <button 
                   onClick={() => setIsVisible(false)}
-                  className="ml-auto p-2 hover:bg-muted rounded-full transition-colors"
+                  className="ml-auto p-2 hover:bg-muted rounded-full transition-colors cursor-pointer"
                 >
                   <X className="h-4 w-4 text-muted-foreground" />
                 </button>
@@ -60,19 +60,19 @@ export function CookieConsent() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   onClick={() => handleAccept("all")}
-                  className="grow rounded-xl font-bold h-11 shadow-lg shadow-primary/20"
+                  className="grow rounded-xl font-bold h-11 bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all cursor-pointer"
                 >
                   Accept All
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => handleAccept("essential")}
-                  className="grow rounded-xl font-bold h-11 border-primary/20 hover:bg-primary/5"
+                  className="grow rounded-xl font-bold h-11 border-primary/20 text-foreground bg-accent/20 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/20 transition-all cursor-pointer"
                 >
                   Essential Only
                 </Button>
                 <Link href="/cookies" className="hidden sm:block">
-                  <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl text-muted-foreground">
+                  <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">
                     <Settings className="h-5 w-5" />
                   </Button>
                 </Link>
