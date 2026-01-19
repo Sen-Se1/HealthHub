@@ -71,26 +71,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Minimal Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white h-5 w-5" />
-            </div>
-            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors hidden sm:block">
-              Back to Home
-            </Link>
-            <ModeToggle />
-          </div>
-        </div>
-      </nav>
-
-      <div className="flex-1 flex flex-col md:flex-row pt-16">
+    <div className="flex-1 flex flex-col md:flex-row">
         {/* Left Side: Illustration (Desktop Only) */}
         <div className="hidden lg:flex flex-[0.8] bg-muted/30 relative items-center justify-center p-12 overflow-hidden border-r border-border/40">
           <div className="absolute inset-0 bg-grid-white opacity-40" aria-hidden="true" />
@@ -235,21 +216,8 @@ export default function LoginPage() {
                 <span className="flex items-center gap-1.5"><Lock className="h-3 w-3" /> 256-bit AES</span>
               </div>
             </div>
-          </motion.div>
-        </div>
+            </motion.div>
       </div>
-
-      {/* Minimal Footer */}
-      <footer className="py-6 border-t border-border/40 bg-muted/20">
-        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-          <p>&copy; {new Date().getFullYear()} HealthHub Inc.</p>
-          <div className="flex gap-8">
-            <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
-            <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms</Link>
-            <Link href="/contact-us" className="hover:text-primary transition-colors">Contact</Link>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

@@ -303,30 +303,7 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Sticky Navbar */}
-      <nav className="sticky top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white h-5 w-5" />
-            </div>
-            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          
-          <div className="flex items-center gap-4">
-            <Link href="/auth/login">
-              <Button variant="ghost" size="sm" className="gap-2 font-bold">
-                <ArrowLeft className="h-4 w-4" /> Back to Login
-              </Button>
-            </Link>
-            <ModeToggle />
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-4 md:p-8 relative overflow-hidden">
+    <div className="flex-1 flex items-center justify-center p-4 md:p-8 relative overflow-hidden">
         {/* Background Decorations */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-10" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px] -z-10" />
@@ -422,22 +399,7 @@ export default function ResetPasswordPage() {
               </Card>
             </motion.div>
           </div>
-        </div>
       </div>
-
-      {/* Minimal Footer */}
-      <footer className="border-t border-border/40 py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-muted-foreground">
-            <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-            <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
-            <Link href="/contact-us" className="hover:text-primary transition-colors">Contact Support</Link>
-          </div>
-          <p className="text-center text-xs text-muted-foreground mt-4">
-            © {new Date().getFullYear()} HealthHub Digital Healthcare. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   )
 }

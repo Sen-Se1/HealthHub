@@ -98,27 +98,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Sticky Navbar */}
-      <nav className="sticky top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Stethoscope className="text-white h-5 w-5" />
-            </div>
-            <span className="font-black text-xl tracking-tighter text-foreground">HealthHub</span>
-          </Link>
-          
-          <div className="flex items-center gap-4">
-            <Link href="/auth/login">
-              <Button variant="ghost" size="sm" className="gap-2 font-bold">
-                Already have an account? <span className="text-primary">Sign in</span>
-              </Button>
-            </Link>
-            <ModeToggle />
-          </div>
-        </div>
-      </nav>
+    <div className="flex-1">
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center p-4 md:p-8 relative overflow-hidden">
@@ -467,19 +447,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Minimal Footer */}
-      <footer className="border-t border-border/40 py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-muted-foreground">
-            <Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-            <Link href="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
-            <Link href="/contact-us" className="hover:text-primary transition-colors">Contact Support</Link>
-          </div>
-          <p className="text-center text-xs text-muted-foreground mt-4">
-            © {new Date().getFullYear()} HealthHub Digital Healthcare. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   )
 }
