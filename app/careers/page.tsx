@@ -190,7 +190,7 @@ export default function CareersPage() {
                className="relative aspect-square md:aspect-auto md:h-[600px] rounded-[3rem] overflow-hidden shadow-2xl"
              >
                <Image 
-                 src="https://images.unsplash.com/photo-1573164067507-40e1d6a9272c?q=80&w=2069&auto=format&fit=crop"
+                 src="/careers-hero.png"
                  alt="Collaboration"
                  fill
                  className="object-cover"

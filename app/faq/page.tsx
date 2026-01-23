@@ -222,31 +222,36 @@ export default function FAQPage() {
       {/* Still Need Help CTA */}
       <section className="py-32 bg-background border-t border-border/40">
         <div className="container mx-auto px-4">
-          <Card className="rounded-[3rem] border-none bg-primary/5 p-12 md:p-20 text-center relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-            
-            <div className="relative z-10 max-w-2xl mx-auto">
-              <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary/20">
-                <Mail className="h-8 w-8 text-white" />
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-6 leading-none">Still have questions?</h2>
-              <p className="text-xl text-muted-foreground font-medium mb-10">
-                Can't find the answer you're looking for? Please reach out to our friendly support team for personal assistance.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact-us" className="w-full sm:w-auto">
-                  <Button size="lg" className="cursor-pointer h-14 px-8 rounded-full font-black text-lg bg-primary hover:bg-primary/80 shadow-xl shadow-primary/20 w-full transition-all duration-300">
-                      Contact Support <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/auth/login" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="cursor-pointer h-14 px-8 rounded-full font-black text-lg border-2 border-primary/20 text-primary hover:bg-primary hover:text-white w-full transition-all duration-300">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Card className="rounded-[3rem] border-none bg-linear-to-br from-primary to-secondary p-12 md:p-24 text-center text-white relative overflow-hidden group shadow-2xl shadow-primary/30">
+              <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2),transparent)] opacity-50 group-hover:scale-110 transition-transform duration-1000" />
+              <div className="relative z-10 max-w-3xl mx-auto">
+                <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-black/20">
+                  <Mail className="h-8 w-8 text-primary" />
+                </div>
+                <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-8 leading-none">Still have <span className="text-primary-foreground italic">Questions?</span></h2>
+                <p className="text-xl md:text-2xl text-white/90 font-medium mb-12 italic">
+                  Can&apos;t find the answer you&apos;re looking for? Our friendly support team is here to help you get the most out of HealthHub.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                  <Link href="/contact-us">
+                    <Button size="lg" className="h-16 px-10 rounded-full font-black text-xl bg-white text-primary hover:bg-white/90 shadow-2xl w-full sm:w-auto cursor-pointer transition-all duration-300">
+                      Contact Support <ArrowRight className="ml-2 h-6 w-6" />
+                    </Button>
+                  </Link>
+                  <Link href="/auth/login">
+                    <Button size="lg" variant="outline" className="h-16 px-10 rounded-full font-black text-xl border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary w-full sm:w-auto cursor-pointer transition-all duration-300">
                       Sign In to Account
-                  </Button>
-                </Link>
+                    </Button>
+                  </Link>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
