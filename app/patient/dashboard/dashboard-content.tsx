@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { CalendarDays, Clock, Search, ArrowRight, Stethoscope, User, Activity, Bell } from "lucide-react"
-import { motion } from "framer-motion"
+import { CalendarDays, Clock, ArrowRight, Stethoscope, User, Activity, Bell, MessageSquare, ChevronRight, Plus, Sparkles } from "lucide-react"
+import { motion, Variants } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 interface Appointment {
   id: number
@@ -18,268 +18,321 @@ interface Appointment {
   first_name: string
   last_name: string
   specialization: string
+  profile_picture_url?: string
+}
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+}
+
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 24 }
+  }
+}
+
+function StatCard({ label, value, icon: Icon, color, bg, delay }: any) {
+  return (
+    <motion.div variants={itemVariants}>
+      <Card className="glass-card border-border/50 hover:shadow-2xl transition-all duration-500 rounded-3xl overflow-hidden group relative">
+        <div className={cn("absolute top-0 right-0 -m-6 w-24 h-24 rounded-full blur-3xl opacity-20", bg)} />
+        <CardContent className="p-8">
+          <div className="flex justify-between items-start mb-6">
+            <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-500", bg, color)}>
+              <Icon className="h-7 w-7" />
+            </div>
+            <div className="h-8 w-8 rounded-full bg-secondary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Plus className="h-4 w-4 text-muted-foreground" />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 + delay }}
+              className="text-4xl font-black text-foreground tracking-tighter"
+            >
+              {value}
+            </motion.p>
+            <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )
+}
+
+function AppointmentCard({ apt, i }: { apt: Appointment, i: number }) {
+  const date = new Date(apt.appointment_date)
+
+  return (
+    <motion.div variants={itemVariants}>
+      <Card className="glass-card border-border/50 hover:shadow-2xl transition-all duration-500 rounded-4xl overflow-hidden group">
+        <CardContent className="p-0">
+          <div className="flex flex-col md:flex-row">
+            {/* Date Block - Neutralized per prompt */}
+            <div className="bg-secondary/30 dark:bg-slate-900/50 md:w-32 p-6 flex flex-col items-center justify-center text-foreground shrink-0 relative overflow-hidden border-r border-border/50">
+              <span className="relative z-10 text-[10px] font-black uppercase tracking-widest text-primary mb-1">{date.toLocaleDateString(undefined, { month: 'short' })}</span>
+              <span className="relative z-10 text-4xl font-black tracking-tighter">{date.getDate()}</span>
+              <span className="relative z-10 text-[10px] font-bold text-muted-foreground/60 mt-1">{date.toLocaleDateString(undefined, { weekday: 'short' })}</span>
+            </div>
+
+            {/* Content Block */}
+            <div className="flex-1 p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-5 w-full sm:w-auto">
+                <div className="h-16 w-16 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0 border border-green-200 dark:border-green-800/20 shadow-sm overflow-hidden group-hover:scale-105 transition-transform duration-500">
+                  {apt.profile_picture_url ? (
+                    <img src={apt.profile_picture_url} alt={apt.last_name} className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-xl font-black text-green-600 dark:text-green-400">{apt.first_name[0]}{apt.last_name[0]}</span>
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-black text-lg tracking-tight">Dr. {apt.first_name} {apt.last_name}</h4>
+                    <Badge className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-none text-[9px] font-black uppercase tracking-wider px-2">
+                      {apt.status === 'approved' ? 'Confirmed' : apt.status}
+                    </Badge>
+                  </div>
+                  <p className="text-primary font-bold text-xs uppercase tracking-wide mb-2">{apt.specialization}</p>
+                  <div className="flex items-center gap-3 text-[11px] font-bold text-muted-foreground/80">
+                    <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-blue-500" /> Consultation</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <Button className="flex-1 sm:flex-none rounded-2xl font-black shadow-xl shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white px-6 py-5">
+                  JOIN CALL
+                </Button>
+                <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border-border/50 hover:bg-secondary/50 transition-colors">
+                  <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )
+}
+
+export function DashboardSkeleton() {
+  return (
+    <div className="container mx-auto px-4 py-8 space-y-12 animate-pulse">
+      <div className="h-48 w-full rounded-4xl bg-muted/30 shimmer" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map(i => <div key={i} className="h-40 w-full rounded-3xl bg-muted/30 shimmer" />)}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="h-8 w-64 rounded-full bg-muted/30" />
+          {[1, 2].map(i => <div key={i} className="h-32 w-full rounded-4xl bg-muted/30 shimmer" />)}
+        </div>
+        <div className="space-y-6">
+          <div className="h-64 w-full rounded-4xl bg-muted/30 shimmer" />
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function PatientDashboardContent() {
   const router = useRouter()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
-  const [userName, setUserName] = useState("Patient")
+  const [user, setUser] = useState<{ first_name: string; last_name: string } | null>(null)
 
   useEffect(() => {
-    // Token is now handled via HttpOnly cookie
-    const fetchAppointments = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch("/api/appointments/list")
-        if (res.ok) {
-          const data = await res.json()
-          setAppointments(data.appointments || [])
+        const [apptsRes, profileRes] = await Promise.all([
+          fetch("/api/appointments/list"),
+          fetch("/api/user/profile")
+        ])
+
+        if (apptsRes.ok) {
+          const apptsData = await apptsRes.json()
+          setAppointments(apptsData.appointments || [])
+        }
+
+        if (profileRes.ok) {
+          const profileData = await profileRes.json()
+          setUser(profileData.user)
         }
       } catch (err) {
-        console.error("Error fetching appointments:", err)
+        console.error("Error fetching dashboard data:", err)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchAppointments()
+    fetchData()
   }, [router])
 
-  const upcomingAppointments = appointments
-    .filter((apt) => new Date(apt.appointment_date) >= new Date() && apt.status === "approved")
-    .slice(0, 3)
+  const upcomingAppointments = useMemo(() => appointments
+    .filter((apt) => new Date(apt.appointment_date) >= new Date() && (apt.status === "approved" || apt.status === "pending"))
+    .sort((a, b) => new Date(a.appointment_date).getTime() - new Date(b.appointment_date).getTime())
+    .slice(0, 3), [appointments])
 
-  const pendingAppointments = appointments.filter((apt) => apt.status === "pending")
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "bg-primary/10 text-primary border-primary/20"
-      case "pending":
-        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-      case "rejected":
-        return "bg-destructive/10 text-destructive border-destructive/20"
-      case "completed":
-        return "bg-blue-500/10 text-blue-500 border-blue-500/20"
-      default:
-        return "bg-muted text-muted-foreground"
-    }
-  }
-
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5 }
-  }
-
-  const stagger = {
-    animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        <div className="flex items-center space-x-4">
-           <Skeleton className="h-12 w-12 rounded-full" />
-           <div className="space-y-2">
-             <Skeleton className="h-8 w-[250px]" />
-             <Skeleton className="h-4 w-[200px]" />
-           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Skeleton className="h-[150px] w-full rounded-xl" />
-            <Skeleton className="h-[150px] w-full rounded-xl" />
-        </div>
-        <Skeleton className="h-[300px] w-full rounded-xl" />
-      </div>
-    )
-  }
+  if (loading) return <DashboardSkeleton />
 
   return (
-    <motion.div 
-      variants={stagger}
-      initial="initial"
-      animate="animate"
-      className="container mx-auto px-4 py-8"
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="container mx-auto px-4 py-8 max-w-7xl relative"
     >
-      {/* Branding / Identity Section */}
-      <motion.div variants={fadeIn} className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-        <div className="flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
-             <span className="text-primary-foreground font-bold text-2xl">H</span>
-          </div>
+      {/* Background Decorative Gradient */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10 mt-[-200px] mr-[-100px]" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl -z-10 mb-[-200px] ml-[-100px]" />
+
+      {/* Header Section */}
+      <motion.div variants={itemVariants} className="mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">HealthHub</h1>
-            <p className="text-muted-foreground">Patient Portal</p>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-[11px] font-black uppercase text-primary tracking-[0.3em]">Patient Portal</span>
+            </div>
+            <h1 className="text-5xl md:text-6xl font-black text-foreground tracking-tighter mb-4">
+              Good morning, <span className="text-primary">{user?.first_name || "John"}</span>
+            </h1>
+            <p className="text-muted-foreground text-lg font-medium max-w-lg leading-relaxed">
+              Welcome back to HealthHub. Here’s a summary of your personalized care program today.
+            </p>
           </div>
-        </div>
-        <div className="flex gap-2">
-            <Button size="icon" variant="outline" className="rounded-full">
-                <Bell className="h-5 w-5" />
-            </Button>
-            <Button size="icon" variant="outline" className="rounded-full">
-                <User className="h-5 w-5" />
-            </Button>
+            <Link href="/patient/find-doctors" className="hidden md:block">
+              <Button size="lg" className="rounded-2xl font-black shadow-xl shadow-primary/20 hover:bg-primary/90 px-8 py-7 group">
+                <Plus className="h-5 w-5 mr-3 group-hover:rotate-90 transition-transform duration-300" />
+                BOOK VISIT
+              </Button>
+            </Link>
         </div>
       </motion.div>
 
-      {/* Welcome Message */}
-      <motion.div variants={fadeIn} className="mb-8">
-         <h2 className="text-2xl font-semibold mb-1">Welcome back</h2>
-         <p className="text-muted-foreground">Here's what's happening with your health today.</p>
-      </motion.div>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12">
+        {/* Main Content: Appointments */}
+        <div className="space-y-10">
+          <motion.div variants={itemVariants} className="flex items-center justify-between">
+            <h2 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-4">
+              Upcoming Visits
+              <span className="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-black border border-primary/10">{upcomingAppointments.length}</span>
+            </h2>
+            <Link href="/patient/appointments" className="group flex items-center gap-2 text-sm font-black text-primary hover:opacity-80 transition-opacity">
+              VIEW SCHEDULE <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
 
-      {/* Quick Actions */}
-      <motion.div variants={fadeIn} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <Card className="glass-card border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg cursor-pointer group overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Link href="/patient/find-doctors">
-            <CardContent className="p-8 flex items-center justify-between relative z-10">
-              <div className="flex items-center gap-6">
-                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Search className="h-7 w-7 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-xl text-foreground mb-1">Find a Doctor</h3>
-                  <p className="text-sm text-muted-foreground">Browse specialists & book now</p>
-                </div>
-              </div>
-              <ArrowRight className="h-6 w-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-            </CardContent>
-          </Link>
-        </Card>
-
-        <Card className="glass-card border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg cursor-pointer group overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Link href="/patient/appointments">
-            <CardContent className="p-8 flex items-center justify-between relative z-10">
-              <div className="flex items-center gap-6">
-                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <CalendarDays className="h-7 w-7 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-xl text-foreground mb-1">My Appointments</h3>
-                  <p className="text-sm text-muted-foreground">{appointments.length} total scheduled</p>
-                </div>
-              </div>
-              <ArrowRight className="h-6 w-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-            </CardContent>
-          </Link>
-        </Card>
-      </motion.div>
-
-      {/* Upcoming Appointments */}
-      <motion.div variants={fadeIn}>
-        <Card className="glass-card border-border/50 mb-8">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-border/40">
-            <CardTitle className="text-xl font-bold flex items-center gap-3">
-              <Clock className="h-5 w-5 text-primary" />
-              Upcoming Appointments
-            </CardTitle>
-            {upcomingAppointments.length > 0 && (
-              <Link href="/patient/appointments">
-                <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
-                  View all
-                </Button>
-              </Link>
-            )}
-          </CardHeader>
-          <CardContent className="pt-6">
+          <div className="space-y-6">
             {upcomingAppointments.length === 0 ? (
-              <div className="text-center py-12 flex flex-col items-center">
-                <div className="h-20 w-20 bg-secondary/50 rounded-full flex items-center justify-center mb-4">
-                     <Stethoscope className="h-10 w-10 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-medium mb-2">No upcoming visits</h3>
-                <p className="text-muted-foreground mb-6 max-w-sm">You don't have any approved appointments scheduled at the moment.</p>
-                <Link href="/patient/find-doctors">
-                  <Button className="shadow-lg shadow-primary/20">Book an Appointment</Button>
-                </Link>
-              </div>
+              <motion.div variants={itemVariants}>
+                <Card className="border-dashed border-2 py-24 text-center rounded-4xl bg-secondary/5 border-border/50">
+                  <div className="h-24 w-24 bg-secondary/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CalendarDays className="h-10 w-10 text-muted-foreground opacity-50" />
+                  </div>
+                  <h3 className="text-2xl font-black mb-3">No pending visits</h3>
+                  <p className="text-muted-foreground max-w-xs mx-auto mb-10 font-medium">Ready to take the next step? Find the right specialist for your health needs.</p>
+                  <Link href="/patient/find-doctors">
+                    <Button variant="secondary" className="rounded-full px-12 h-12 font-black text-sm tracking-widest uppercase">DISCOVER DOCTORS</Button>
+                  </Link>
+                </Card>
+              </motion.div>
             ) : (
-              <div className="space-y-4">
-                {upcomingAppointments.map((apt) => (
-                  <motion.div
-                    key={apt.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    whileHover={{ scale: 1.01 }}
-                    className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors gap-4"
-                  >
-                    <div className="flex items-center gap-5">
-                      <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0 shadow-md">
-                        <span className="text-primary-foreground font-bold text-lg">
-                          {apt.first_name[0]}
-                          {apt.last_name[0]}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="font-bold text-lg text-foreground">
-                          Dr. {apt.first_name} {apt.last_name}
-                        </p>
-                        <p className="text-sm font-medium text-primary mb-1">{apt.specialization}</p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                           <CalendarDays className="h-3 w-3" />
-                           {new Date(apt.appointment_date).toLocaleDateString("en-US", {
-                             weekday: "short",
-                             month: "short",
-                             day: "numeric",
-                           })}
-                           <span className="mx-1">•</span>
-                           <Clock className="h-3 w-3" />
-                           {new Date(apt.appointment_date).toLocaleTimeString("en-US", {
-                             hour: "2-digit",
-                             minute: "2-digit",
-                           })}
-                        </div>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(apt.status)} variant="outline">{apt.status}</Badge>
-                  </motion.div>
-                ))}
-              </div>
+              upcomingAppointments.map((apt, i) => (
+                <AppointmentCard key={apt.id} apt={apt} i={i} />
+              ))
             )}
-          </CardContent>
-        </Card>
-      </motion.div>
+          </div>
 
-      {/* Pending Appointments */}
-      {pendingAppointments.length > 0 && (
-        <motion.div variants={fadeIn}>
-            <Card className="glass-card border-yellow-500/20 bg-yellow-500/5">
-            <CardHeader>
-                <CardTitle className="text-foreground flex items-center gap-2 text-lg">
-                <Activity className="h-5 w-5 text-yellow-500" />
-                Pending Approval ({pendingAppointments.length})
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-3">
-                {pendingAppointments.slice(0, 3).map((apt) => (
-                    <div
-                    key={apt.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-background/40 border border-yellow-500/10 gap-2"
-                    >
-                    <div>
-                        <p className="font-semibold text-foreground">
-                        Dr. {apt.first_name} {apt.last_name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                        {new Date(apt.appointment_date).toLocaleDateString()}
-                        </p>
-                    </div>
-                    <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 w-fit">Pending</Badge>
-                    </div>
-                ))}
+          {/* Quick Actions Panel */}
+          <motion.div variants={itemVariants} className="bg-card/40 glass-card p-10 rounded-4xl border border-border/50 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+              <Sparkles className="h-32 w-32 text-primary" />
+            </div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-black mb-2 tracking-tight">Need immediate assistance?</h2>
+              <p className="text-muted-foreground font-medium mb-8 max-w-md italic">Quickly access our top services or speak with a specialist through secure chat.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Link href="/patient/find-doctors">
+                  <Button className="w-full h-16 rounded-2xl font-black text-xs tracking-widest shadow-xl shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white">FIND DOCTOR</Button>
+                </Link>
+                <Link href="/patient/chat">
+                  <Button variant="outline" className="w-full h-16 rounded-2xl font-black text-xs tracking-widest border-2 border-primary/20 hover:bg-primary/5 text-primary">START CHAT</Button>
+                </Link>
+                <Button variant="outline" className="w-full h-16 rounded-2xl font-black text-xs tracking-widest border-2 hover:bg-background/80">REFILLS</Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Sidebar: Notifications */}
+        <motion.div variants={itemVariants} className="space-y-10">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-black text-foreground tracking-tight flex items-center gap-3">
+              Latest Feeds
+              <div className="h-5 w-5 bg-blue-600 text-white text-[10px] font-black rounded-full flex items-center justify-center">3</div>
+            </h3>
+            <Button variant="ghost" size="icon" className="rounded-2xl hover:bg-secondary">
+              <Bell className="h-5 w-5 text-muted-foreground" />
+            </Button>
+          </div>
+
+          <Card className="glass-card border-border/50 shadow-2xl rounded-4xl overflow-hidden divide-y divide-border/50 bg-card">
+            {[
+              { title: "Lab Results Ready", desc: "Biometric analysis from Jan 25th", time: "2h ago", icon: Activity, color: "text-green-600", bg: "bg-green-500/10" },
+              { title: "Prescription Update", desc: "Dr. Adams added a new note", time: "5h ago", icon: Stethoscope, color: "text-blue-600", bg: "bg-blue-500/10" },
+              { title: "Consultation Alert", desc: "Pending review for appointment #422", time: "Yesterday", icon: Bell, color: "text-amber-600", bg: "bg-amber-500/10" },
+            ].map((note, i) => (
+              <div key={i} className="p-6 hover:bg-primary/5 transition-all cursor-pointer group flex items-start gap-4">
+                <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500", note.bg, note.color)}>
+                  <note.icon className="h-5 w-5" />
                 </div>
-            </CardContent>
-            </Card>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-sm font-black text-foreground leading-tight uppercase tracking-tight">{note.title}</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground/80 mb-2 line-clamp-1 font-semibold">{note.desc}</p>
+                  <span className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest">{note.time}</span>
+                </div>
+              </div>
+            ))}
+            <div className="p-4 bg-secondary/10 dark:bg-slate-900/40 text-center">
+              <Button variant="ghost" className="text-[10px] font-black tracking-widest uppercase text-muted-foreground/60 hover:text-primary">MARK ALL AS READ</Button>
+            </div>
+          </Card>
+
+          {/* Medical Profile Quick Card */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="bg-linear-to-br from-green-100/50 to-white dark:from-green-950/20 dark:to-slate-950 p-8 rounded-4xl border border-border/50 shadow-xl relative group overflow-hidden"
+          >
+            <div className="absolute -bottom-6 -right-6 h-32 w-32 bg-green-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000" />
+            <div className="relative z-10">
+              <div className="h-12 w-12 bg-white dark:bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg mb-6 group-hover:rotate-6 transition-transform border border-border/50">
+                <User className="h-6 w-6 text-green-600" />
+              </div>
+              <h4 className="text-xl font-black mb-2 tracking-tight">Your Health Profile</h4>
+              <p className="text-xs text-muted-foreground font-bold mb-6 leading-relaxed">Update your biometric data for more accurate health monitoring.</p>
+              <Link href="/patient/profile">
+                <Button variant="outline" className="w-full rounded-2xl font-black text-[10px] tracking-[0.2em] border-2 border-primary/10 uppercase py-6 hover:bg-primary/5 hover:text-primary transition-all">UPDATE INFO</Button>
+              </Link>
+            </div>
+          </motion.div>
         </motion.div>
-      )}
+      </div>
     </motion.div>
   )
 }
